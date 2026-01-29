@@ -55,12 +55,12 @@
         <h2 id="about-heading" class="section-title">About Me</h2>
         <div class="about-content">
           <div class="about-text">
-            <p>
+            <p id="about-bio-1">
               I'm a developer who loves building, learning, and shipping. Whether it's automating workflows,
               crafting bots, or building web applications — I focus on creating solutions that are reliable
               and enjoyable to use.
             </p>
-            <p>
+            <p id="about-bio-2">
               I believe in continuous learning and putting ideas into code. My work spans frontend, backend,
               and automation — always with an eye for clean architecture and user experience.
             </p>
@@ -99,27 +99,24 @@
       </div>
     </section>
 
-    <!-- ========== PROJECTS ========== -->
+    <!-- ========== PROJECTS (populated from GitHub API) ========== -->
     <section class="section projects" id="projects" aria-labelledby="projects-heading">
       <div class="container">
         <h2 id="projects-heading" class="section-title">Projects</h2>
-        <div class="projects-grid">
-          <article class="project-card">
-            <h3>Project One</h3>
-            <p>Short description of your first project. Replace with real details and link.</p>
-            <a href="https://github.com/deepankar-sidharth" class="project-link" target="_blank" rel="noopener noreferrer">View on GitHub →</a>
-          </article>
-          <article class="project-card">
-            <h3>Project Two</h3>
-            <p>Short description of your second project. Easy to customize and add more.</p>
-            <a href="https://github.com/deepankar-sidharth" class="project-link" target="_blank" rel="noopener noreferrer">View on GitHub →</a>
-          </article>
-          <article class="project-card">
-            <h3>Project Three</h3>
-            <p>Short description of your third project. Duplicate cards to add more.</p>
-            <a href="https://github.com/deepankar-sidharth" class="project-link" target="_blank" rel="noopener noreferrer">View on GitHub →</a>
-          </article>
+        <div id="projects-grid" class="projects-grid" aria-live="polite">
+          <!-- Loading state: replaced by JS with real repos or fallback -->
+          <div id="projects-loading" class="projects-loading">
+            <div class="projects-loading-dots" aria-hidden="true">
+              <span class="projects-loading-dot"></span>
+              <span class="projects-loading-dot"></span>
+              <span class="projects-loading-dot"></span>
+            </div>
+            <p>Loading projects from GitHub…</p>
+          </div>
         </div>
+        <p class="projects-more">
+          <a href="https://github.com/deepankar-sidharth?tab=repositories" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">View all on GitHub →</a>
+        </p>
       </div>
     </section>
 
