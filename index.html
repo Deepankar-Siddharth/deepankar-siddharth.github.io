@@ -123,6 +123,11 @@
     </footer>
   </main>
 
+  <!-- Optional: shown when using fallback data (API failed / offline) — silent, no alerts -->
+  <div id="offline-badge" class="offline-badge" aria-live="polite" title="Showing cached or fallback data">Offline mode</div>
+
+  <!-- Fallback data loaded first so it's available if API fails -->
+  <script src="fallback-data.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

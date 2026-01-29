@@ -583,6 +583,31 @@ ul { list-style: none; }
 }
 .footer-bottom p { font-size: 0.875rem; color: var(--text-muted); }
 
+/* ---------- Offline mode badge (shown when using fallback data) ---------- */
+.offline-badge {
+  position: fixed;
+  bottom: var(--space-lg);
+  right: var(--space-lg);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  backdrop-filter: blur(12px);
+  z-index: 40;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition: opacity var(--duration) var(--ease-out), visibility var(--duration), transform var(--duration) var(--ease-out);
+}
+.offline-badge.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
 /* ---------- Responsive ---------- */
 @media (max-width: 768px) {
   .nav-links {

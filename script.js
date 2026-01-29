@@ -1,10 +1,14 @@
 /**
- * GitHub Portfolio — Fetches live data from GitHub REST API
- * Uses Fetch API, localStorage cache, loading skeletons, error handling
+ * GitHub Portfolio — Live data from GitHub REST API with smart fallback
  *
- * GitHub API docs: https://docs.github.com/en/rest
- * - GET /users/:username — profile (name, bio, avatar_url, followers, following, public_repos)
- * - GET /users/:username/repos — public repos (sort, per_page)
+ * DATA SOURCE ORDER (never breaks):
+ * 1. Try GitHub API first (live data)
+ * 2. On success: cache in localStorage, render
+ * 3. On failure (rate limit, offline, error): try cache
+ * 4. If no cache: use fallback-data.js (window.GITHUB_FALLBACK_DATA)
+ * 5. UI is identical regardless of source; optional "Offline mode" badge when using fallback
+ *
+ * GitHub API: GET /users/:username, GET /users/:username/repos
  */
 
 (function () {
@@ -15,7 +19,7 @@
   var GITHUB_API = 'https://api.github.com';
   var GITHUB_PROFILE = 'https://github.com/' + GITHUB_USER;
   var CACHE_KEY = 'github_portfolio_' + GITHUB_USER;
-  var CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour — avoid hitting API rate limits (60/hr unauthenticated)
+  var CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour — respects API rate limits (60/hr unauthenticated)
 
   // ---------- DOM refs ----------
   var heroAvatar = document.getElementById('hero-avatar');
@@ -29,15 +33,16 @@
   var projectsLoading = document.getElementById('projects-loading');
   var skillsList = document.getElementById('skills-list');
   var skillsLoading = document.getElementById('skills-loading');
+  var offlineBadge = document.getElementById('offline-badge');
 
-  // ---------- Cache ----------
+  // ---------- Cache (localStorage) — used when API fails but we had a previous success ----------
   function getCached() {
     try {
       var raw = localStorage.getItem(CACHE_KEY);
       if (!raw) return null;
       var data = JSON.parse(raw);
-      if (data && data.timestamp && (Date.now() - data.timestamp < CACHE_TTL_MS)) {
-        return data;
+      if (data && data.user && data.timestamp && (Date.now() - data.timestamp < CACHE_TTL_MS)) {
+        return { user: data.user, repos: Array.isArray(data.repos) ? data.repos : [] };
       }
     } catch (e) { /* ignore */ }
     return null;
@@ -47,10 +52,26 @@
     try {
       localStorage.setItem(CACHE_KEY, JSON.stringify({
         user: user,
-        repos: repos,
+        repos: repos || [],
         timestamp: Date.now()
       }));
     } catch (e) { /* ignore */ }
+  }
+
+  // ---------- Fallback data (from fallback-data.js) — used when API fails and cache is empty ----------
+  function getFallbackData() {
+    try {
+      var data = typeof window !== 'undefined' && window.GITHUB_FALLBACK_DATA;
+      if (data && data.user && Array.isArray(data.repos)) {
+        return { user: data.user, repos: data.repos };
+      }
+    } catch (e) { /* ignore */ }
+    return null;
+  }
+
+  // ---------- Offline badge — subtle indicator when showing fallback data ----------
+  function showOfflineBadge(show) {
+    if (offlineBadge) offlineBadge.classList.toggle('is-visible', !!show);
   }
 
   // ---------- Fetch with timeout & headers ----------
@@ -224,12 +245,31 @@
     }).join('');
   }
 
-  // ---------- Fallback when API fails ----------
+  /**
+   * Apply data to UI — same code path for API, cache, or fallback.
+   * UI is identical regardless of source; fromFallback only toggles the offline badge.
+   */
+  function applyData(user, repos, fromFallback) {
+    if (user) {
+      renderHero(user);
+      renderStats(user);
+    }
+    renderProjects(Array.isArray(repos) ? repos : []);
+    renderSkills(Array.isArray(repos) ? repos : []);
+    showOfflineBadge(!!fromFallback);
+  }
+
+  /** Last-resort fallback when API fails, cache empty, and fallback-data.js missing or invalid */
   function showError() {
+    var fallback = getFallbackData();
+    if (fallback && fallback.user) {
+      applyData(fallback.user, fallback.repos, true);
+      return;
+    }
     renderHero({
       name: 'Deepankar Siddharth',
       login: GITHUB_USER,
-      bio: 'Developer · Automation · Web apps. Data could not be loaded from GitHub.',
+      bio: 'Developer · Automation · Web apps. GitHub data unavailable — check back later.',
       avatar_url: '',
       html_url: GITHUB_PROFILE
     });
@@ -238,56 +278,60 @@
     if (statRepos) { statRepos.textContent = '—'; statRepos.classList.remove('skeleton-text'); }
     if (projectsGrid) {
       projectsGrid.innerHTML =
-        '<article class="project-card">' +
-        '<h3>My repositories</h3>' +
-        '<p>See my public projects on GitHub.</p>' +
-        '<a href="' + GITHUB_PROFILE + '?tab=repositories" class="project-link" target="_blank" rel="noopener noreferrer">View on GitHub →</a>' +
-        '</article>' +
-        '<article class="project-card">' +
-        '<h3>Profile</h3>' +
-        '<p>Check out my GitHub profile.</p>' +
-        '<a href="' + GITHUB_PROFILE + '" class="project-link" target="_blank" rel="noopener noreferrer">View on GitHub →</a>' +
-        '</article>';
+        '<article class="project-card"><h3>My repositories</h3><p>See my public projects on GitHub.</p>' +
+        '<a href="' + GITHUB_PROFILE + '?tab=repositories" class="project-link" target="_blank" rel="noopener noreferrer">View on GitHub →</a></article>' +
+        '<article class="project-card"><h3>Profile</h3><p>Check out my GitHub profile.</p>' +
+        '<a href="' + GITHUB_PROFILE + '" class="project-link" target="_blank" rel="noopener noreferrer">View on GitHub →</a></article>';
     }
     if (skillsList) skillsList.innerHTML = '<span class="skill-badge">—</span>';
+    showOfflineBadge(true);
   }
 
-  // ---------- Load data (cache or API) ----------
+  /**
+   * Load data — smart fallback order (never breaks):
+   * 1. Try GitHub API
+   * 2. On success: cache + applyData(fromFallback: false)
+   * 3. On failure: try cache → applyData(fromFallback: false)
+   * 4. No cache: try fallback-data.js → applyData(fromFallback: true)
+   * 5. No fallback: showError() (minimal UI + offline badge)
+   */
   function loadData() {
-    var cached = getCached();
-    if (cached && cached.user && Array.isArray(cached.repos)) {
-      renderHero(cached.user);
-      renderStats(cached.user);
-      renderProjects(cached.repos);
-      renderSkills(cached.repos);
-      return;
-    }
-
     Promise.all([
       fetchApi(GITHUB_API + '/users/' + GITHUB_USER).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
       fetchApi(GITHUB_API + '/users/' + GITHUB_USER + '/repos?sort=updated&per_page=100').then(function (r) { return r.ok ? r.json() : []; }).catch(function () { return []; })
     ]).then(function (results) {
       var user = results[0];
       var repos = Array.isArray(results[1]) ? results[1] : [];
-      if (user) {
+      if (user && (user.login || user.name)) {
         setCache(user, repos);
-        renderHero(user);
-        renderStats(user);
-      } else {
-        renderHero({
-          name: 'Deepankar Siddharth',
-          login: GITHUB_USER,
-          bio: 'Developer · Automation · Web apps. Profile data could not be loaded.',
-          avatar_url: '',
-          html_url: GITHUB_PROFILE
-        });
-        if (statFollowers) { statFollowers.textContent = '—'; statFollowers.classList.remove('skeleton-text'); }
-        if (statFollowing) { statFollowing.textContent = '—'; statFollowing.classList.remove('skeleton-text'); }
-        if (statRepos) { statRepos.textContent = '—'; statRepos.classList.remove('skeleton-text'); }
+        applyData(user, repos, false);
+        return;
       }
-      renderProjects(repos);
-      renderSkills(repos);
+      // API failed or rate-limited — try cache
+      var cached = getCached();
+      if (cached && cached.user) {
+        applyData(cached.user, cached.repos, false);
+        return;
+      }
+      // No cache — use fallback-data.js
+      var fallback = getFallbackData();
+      if (fallback && fallback.user) {
+        applyData(fallback.user, fallback.repos, true);
+        return;
+      }
+      showError();
     }).catch(function () {
+      // Network error or timeout — try cache then fallback
+      var cached = getCached();
+      if (cached && cached.user) {
+        applyData(cached.user, cached.repos, false);
+        return;
+      }
+      var fallback = getFallbackData();
+      if (fallback && fallback.user) {
+        applyData(fallback.user, fallback.repos, true);
+        return;
+      }
       showError();
     });
   }
