@@ -3,131 +3,167 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Deepankar Siddharth — GitHub portfolio. Developer, automation, web apps. Built with GitHub API.">
+  <meta name="description" content="Deepankar Siddharth — Developer focused on automation, bots, and web apps. Building, learning, and shipping projects.">
   <meta name="author" content="Deepankar Siddharth">
   <meta name="theme-color" content="#0d1117">
-  <title>Deepankar Siddharth | Developer Portfolio</title>
+  <title>Deepankar Siddharth | Developer</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- Skip link for accessibility -->
   <a href="#main" class="skip-link">Skip to main content</a>
 
-  <!-- ========== NAV ========== -->
-  <nav class="nav" role="navigation">
-    <a href="#hero" class="nav-logo">DS</a>
-    <ul class="nav-links">
-      <li><a href="#hero">Home</a></li>
-      <li><a href="#stats">Stats</a></li>
-      <li><a href="#projects">Projects</a></li>
-      <li><a href="#skills">Skills</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
-    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
-      <span></span><span></span><span></span>
-    </button>
-  </nav>
-
-  <!-- ========== HERO (data from GitHub API) ========== -->
-  <header class="hero" id="hero">
-    <div class="hero-bg" aria-hidden="true"></div>
-    <div class="hero-content">
-      <div class="hero-avatar-wrap">
-        <img id="hero-avatar" class="hero-avatar skeleton" src="" alt="" width="140" height="140">
-      </div>
-      <p class="hero-greeting">Hi, I'm</p>
-      <h1 id="hero-name" class="hero-name skeleton-text">Loading…</h1>
-      <p id="hero-bio" class="hero-bio skeleton-text">Loading bio…</p>
-      <div class="hero-cta">
-        <a href="https://github.com/deepankar-sidharth" id="hero-github-link" class="btn btn-primary" target="_blank" rel="noopener noreferrer">View GitHub</a>
-        <a href="#contact" class="btn btn-secondary">Get in Touch</a>
-      </div>
-    </div>
-    <div class="hero-scroll" aria-hidden="true">
-      <span>Scroll</span>
-      <div class="scroll-line"></div>
-    </div>
+  <!-- Navigation -->
+  <header class="header" role="banner">
+    <nav class="nav" aria-label="Main navigation">
+      <a href="#hero" class="nav-logo">DS</a>
+      <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </nav>
   </header>
 
   <main id="main">
-    <!-- ========== STATS (from GitHub API) ========== -->
-    <section class="section stats" id="stats" aria-labelledby="stats-heading">
+    <!-- Hero Section -->
+    <section id="hero" class="hero" aria-labelledby="hero-heading">
+      <div class="hero-bg"></div>
+      <div class="hero-content container">
+        <p class="hero-greeting">Hi, I'm</p>
+        <h1 id="hero-heading" class="hero-name">Deepankar Siddharth</h1>
+        <p class="hero-tagline">
+          <span class="tagline-item">developer</span>
+          <span class="tagline-sep">/</span>
+          <span class="tagline-item">automation</span>
+          <span class="tagline-sep">/</span>
+          <span class="tagline-item">bots</span>
+          <span class="tagline-sep">/</span>
+          <span class="tagline-item">web apps</span>
+        </p>
+        <p class="hero-desc">Building things that matter. Learning in public. Shipping often.</p>
+        <div class="hero-cta">
+          <a href="https://github.com/deepankar-sidharth" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+            GitHub
+          </a>
+          <a href="#contact" class="btn btn-secondary">Contact</a>
+        </div>
+      </div>
+      <div class="hero-scroll" aria-hidden="true">
+        <span>Scroll</span>
+        <div class="scroll-line"></div>
+      </div>
+    </section>
+
+    <!-- About Me -->
+    <section id="about" class="section about" aria-labelledby="about-heading">
       <div class="container">
-        <h2 id="stats-heading" class="section-title">GitHub Stats</h2>
-        <div class="stats-grid">
-          <article class="stat-card" aria-label="Followers">
-            <span id="stat-followers" class="stat-value skeleton-text">—</span>
-            <span class="stat-label">Followers</span>
+        <h2 id="about-heading" class="section-title">About Me</h2>
+        <div class="about-content">
+          <p class="about-text">
+            I'm a developer who loves building, learning, and shipping. Whether it's automation that saves time,
+            bots that solve real problems, or web apps that delight users — I focus on creating things that work
+            and that people actually use.
+          </p>
+          <p class="about-text">
+            I believe in learning in public, iterating quickly, and keeping the code clean. When I'm not coding,
+            I'm probably exploring new tools or thinking about the next project to build.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Skills / Tech Stack -->
+    <section id="skills" class="section skills" aria-labelledby="skills-heading">
+      <div class="container">
+        <h2 id="skills-heading" class="section-title">Skills & Tech Stack</h2>
+        <div class="skills-grid">
+          <article class="skill-card">
+            <span class="skill-icon" aria-hidden="true">◆</span>
+            <h3 class="skill-title">Frontend</h3>
+            <p class="skill-list">HTML, CSS, JavaScript, Responsive Design</p>
           </article>
-          <article class="stat-card" aria-label="Following">
-            <span id="stat-following" class="stat-value skeleton-text">—</span>
-            <span class="stat-label">Following</span>
+          <article class="skill-card">
+            <span class="skill-icon" aria-hidden="true">◆</span>
+            <h3 class="skill-title">Backend</h3>
+            <p class="skill-list">Node.js, APIs, Databases</p>
           </article>
-          <article class="stat-card" aria-label="Public repositories">
-            <span id="stat-repos" class="stat-value skeleton-text">—</span>
-            <span class="stat-label">Public Repos</span>
+          <article class="skill-card">
+            <span class="skill-icon" aria-hidden="true">◆</span>
+            <h3 class="skill-title">Automation & Tools</h3>
+            <p class="skill-list">Scripting, CI/CD, CLI tools</p>
+          </article>
+          <article class="skill-card">
+            <span class="skill-icon" aria-hidden="true">◆</span>
+            <h3 class="skill-title">Other</h3>
+            <p class="skill-list">Git, Linux, Problem Solving</p>
           </article>
         </div>
       </div>
     </section>
 
-    <!-- ========== PROJECTS (repos from GitHub API) ========== -->
-    <section class="section projects" id="projects" aria-labelledby="projects-heading">
+    <!-- Projects -->
+    <section id="projects" class="section projects" aria-labelledby="projects-heading">
       <div class="container">
         <h2 id="projects-heading" class="section-title">Projects</h2>
-        <div id="projects-grid" class="projects-grid" aria-live="polite">
-          <!-- Skeleton cards: replaced by script.js with real repo data -->
-          <div id="projects-loading" class="projects-loading">
-            <div class="skeleton-card"></div>
-            <div class="skeleton-card"></div>
-            <div class="skeleton-card"></div>
-          </div>
+        <p class="section-subtitle">Things I've built. More to come.</p>
+        <div class="projects-grid">
+          <article class="project-card">
+            <h3 class="project-title">Project One</h3>
+            <p class="project-desc">A short description of what this project does and why it's useful. Easy to replace with real projects later.</p>
+            <a href="https://github.com/deepankar-sidharth" class="project-link" target="_blank" rel="noopener noreferrer">
+              View on GitHub
+              <span class="link-arrow" aria-hidden="true">→</span>
+            </a>
+          </article>
+          <article class="project-card">
+            <h3 class="project-title">Project Two</h3>
+            <p class="project-desc">Another project placeholder. Add your actual repos, descriptions, and links when ready.</p>
+            <a href="https://github.com/deepankar-sidharth" class="project-link" target="_blank" rel="noopener noreferrer">
+              View on GitHub
+              <span class="link-arrow" aria-hidden="true">→</span>
+            </a>
+          </article>
+          <article class="project-card">
+            <h3 class="project-title">Project Three</h3>
+            <p class="project-desc">Third placeholder card. Duplicate this block and update title, description, and GitHub URL for each project.</p>
+            <a href="https://github.com/deepankar-sidharth" class="project-link" target="_blank" rel="noopener noreferrer">
+              View on GitHub
+              <span class="link-arrow" aria-hidden="true">→</span>
+            </a>
+          </article>
         </div>
-        <p class="projects-more">
-          <a href="https://github.com/deepankar-sidharth?tab=repositories" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">View all on GitHub →</a>
-        </p>
       </div>
     </section>
 
-    <!-- ========== SKILLS (languages derived from repos) ========== -->
-    <section class="section skills" id="skills" aria-labelledby="skills-heading">
-      <div class="container">
-        <h2 id="skills-heading" class="section-title">Skills</h2>
-        <p class="skills-intro">Languages & technologies from my repositories</p>
-        <div id="skills-list" class="skills-list" aria-live="polite">
-          <!-- Skeleton badges: replaced by script.js with repo languages -->
-          <div id="skills-loading" class="skills-loading">
-            <span class="skeleton-badge"></span>
-            <span class="skeleton-badge"></span>
-            <span class="skeleton-badge"></span>
-            <span class="skeleton-badge"></span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========== FOOTER / CONTACT ========== -->
-    <footer class="footer" id="contact">
+    <!-- Contact / Footer -->
+    <footer id="contact" class="footer" role="contentinfo">
       <div class="container">
         <h2 class="footer-heading">Get in Touch</h2>
-        <a href="https://github.com/deepankar-sidharth" class="footer-github" target="_blank" rel="noopener noreferrer">
-          <span class="footer-github-icon" aria-hidden="true">↗</span>
+        <p class="footer-text">Open to collaboration and interesting ideas. Find me on GitHub.</p>
+        <a href="https://github.com/deepankar-sidharth" class="footer-github" target="_blank" rel="noopener noreferrer" aria-label="GitHub profile">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+          </svg>
           github.com/deepankar-sidharth
         </a>
-        <div class="footer-bottom">
-          <p>© <span id="year"></span> Deepankar Siddharth. Built with GitHub API.</p>
-        </div>
+        <p class="footer-copy">&copy; <span id="year"></span> Deepankar Siddharth. Built for GitHub Pages.</p>
       </div>
     </footer>
   </main>
 
-  <!-- Optional: shown when using fallback data (API failed / offline) — silent, no alerts -->
-  <div id="offline-badge" class="offline-badge" aria-live="polite" title="Showing cached or fallback data">Offline mode</div>
-
-  <!-- Fallback data loaded first so it's available if API fails -->
-  <script src="fallback-data.js"></script>
-  <script src="script.js"></script>
+  <script src="main.js"></script>
 </body>
 </html>
