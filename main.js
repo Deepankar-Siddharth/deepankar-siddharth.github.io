@@ -47,14 +47,51 @@
   // ---------- GitHub: fetch profile and repos ----------
   var projectsGrid = document.getElementById('projects-grid');
   var projectsLoading = document.getElementById('projects-loading');
+  var REPOS_URL = GITHUB_API + '/users/' + GITHUB_USER + '/repos?sort=updated&per_page=20';
+  var USER_URL = GITHUB_API + '/users/' + GITHUB_USER;
+  var FETCH_TIMEOUT_MS = 12000;
+
+  function fetchWithTimeout(url) {
+    var controller = new AbortController();
+    var timeoutId = setTimeout(function () { controller.abort(); }, FETCH_TIMEOUT_MS);
+    return fetch(url, {
+      method: 'GET',
+      headers: { Accept: 'application/vnd.github.v3+json' },
+      signal: controller.signal,
+      mode: 'cors'
+    }).then(function (r) {
+      clearTimeout(timeoutId);
+      return r;
+    }).catch(function (err) {
+      clearTimeout(timeoutId);
+      throw err;
+    });
+  }
 
   function showProjectsError() {
     if (!projectsGrid) return;
     projectsGrid.innerHTML =
       '<div class="projects-error">' +
-      '<p>Could not load projects from GitHub. Visit my profile to see what I\'m building.</p>' +
-      '<a href="' + GITHUB_PROFILE + '?tab=repositories" class="btn btn-primary" target="_blank" rel="noopener noreferrer">View GitHub Repos</a>' +
+      '<p>Projects are loaded from GitHub. Visit my profile to see what I\'m building.</p>' +
+      '<a href="' + GITHUB_PROFILE + '?tab=repositories" class="btn btn-primary" target="_blank" rel="noopener noreferrer">View all repos on GitHub →</a>' +
       '</div>';
+  }
+
+  function showFallbackCards() {
+    if (!projectsGrid) return;
+    var reposUrl = GITHUB_PROFILE + '?tab=repositories';
+    var profileUrl = GITHUB_PROFILE;
+    projectsGrid.innerHTML =
+      '<article class="project-card">' +
+      '<h3>My repositories</h3>' +
+      '<p>See my public projects, scripts, and apps on GitHub.</p>' +
+      '<a href="' + reposUrl + '" class="project-link" target="_blank" rel="noopener noreferrer">View on GitHub →</a>' +
+      '</article>' +
+      '<article class="project-card">' +
+      '<h3>Profile</h3>' +
+      '<p>Check out my GitHub profile for contributions and activity.</p>' +
+      '<a href="' + profileUrl + '" class="project-link" target="_blank" rel="noopener noreferrer">View on GitHub →</a>' +
+      '</article>';
   }
 
   function escapeHtml(text) {
@@ -88,17 +125,14 @@
 
   function showProjects(repos) {
     if (!projectsGrid) return;
-    // Exclude this portfolio repo and optionally forks; show most recently updated
-    var list = (repos || []).filter(function (r) {
-      return r.name !== GITHUB_USER + '.github.io' && !r.name.toLowerCase().endsWith('.github.io');
+    var raw = Array.isArray(repos) ? repos : [];
+    // Only exclude the exact Pages repo (username.github.io); include all other repos
+    var list = raw.filter(function (r) {
+      return r && r.name !== (GITHUB_USER + '.github.io');
     }).slice(0, 8);
 
     if (list.length === 0) {
-      projectsGrid.innerHTML =
-        '<div class="projects-error">' +
-        '<p>No public repos yet. Check back soon or visit my GitHub.</p>' +
-        '<a href="' + GITHUB_PROFILE + '?tab=repositories" class="btn btn-primary" target="_blank" rel="noopener noreferrer">View GitHub</a>' +
-        '</div>';
+      showFallbackCards();
       return;
     }
 
@@ -115,20 +149,16 @@
   // Fetch user profile (bio) and repos in parallel
   if (projectsGrid && projectsLoading) {
     Promise.all([
-      fetch(GITHUB_API + '/users/' + GITHUB_USER).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
-      fetch(GITHUB_API + '/users/' + GITHUB_USER + '/repos?sort=updated&per_page=15').then(function (r) { return r.ok ? r.json() : []; }).catch(function () { return []; })
+      fetchWithTimeout(USER_URL).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
+      fetchWithTimeout(REPOS_URL).then(function (r) { return r.ok ? r.json() : []; }).catch(function () { return []; })
     ]).then(function (results) {
       var profile = results[0];
       var repos = results[1] || [];
       if (profile) updateAboutFromProfile(profile);
       var repoList = Array.isArray(repos) ? repos : [];
-      if (!profile && repoList.length === 0) {
-        showProjectsError();
-      } else {
-        showProjects(repoList);
-      }
+      showProjects(repoList);
     }).catch(function () {
-      showProjectsError();
+      showFallbackCards();
     });
   }
 })();
