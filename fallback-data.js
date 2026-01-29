@@ -24,101 +24,104 @@ const FALLBACK_DATA = (function () {
   'use strict';
 
   // ——— Change this to match GITHUB_USERNAME in script.js ———
-  const username = 'Deepankar-Siddharth';
+  const username = 'deepankar-siddharth';
   const profileUrl = 'https://github.com/' + username;
 
-  // User profile information
+  // User profile information (based on real GitHub profile)
   const user = {
     login: username,
     name: 'Deepankar Siddharth',
-    bio: 'Building things that matter. Developer exploring automation, bots, and web applications. Learning in public, shipping often.',
+    bio: 'BDS student by day, developer by night. Automation specialist building headless tools that solve real-world problems. Precision in the clinic, automation in the terminal.',
     avatar_url: 'https://github.com/' + username + '.png',
     html_url: profileUrl,
-    public_repos: 10,
-    followers: 5,
-    following: 10,
+    public_repos: 46,
+    followers: 8,
+    following: 18,
+    company: 'WeSoDev',
+    location: 'India',
+    blog: 'WeSoDev.tech',
     created_at: '2020-01-15T00:00:00Z',
     updated_at: new Date().toISOString().slice(0, 10) + 'T00:00:00Z'
   };
 
-  // Sample repositories (customize with your actual repos)
+  // Sample repositories (based on real GitHub profile)
   const repos = [
     {
-      name: 'portfolio',
-      description: 'Personal developer portfolio — cinematic GitHub-powered experience.',
-      html_url: profileUrl + '/portfolio',
-      stargazers_count: 3,
+      name: 'terminal_package_collection',
+      description: 'The ultimate server bootstrap toolkit — curated scripts, binaries, and configs for zero-touch deployment.',
+      html_url: profileUrl + '/terminal_package_collection',
+      stargazers_count: 1,
       forks_count: 1,
-      language: 'JavaScript',
+      language: 'Shell',
       updated_at: new Date().toISOString(),
       created_at: '2024-01-01T00:00:00Z',
       fork: false
     },
     {
-      name: 'automation-scripts',
-      description: 'Collection of automation scripts and bots for everyday tasks.',
-      html_url: profileUrl + '/automation-scripts',
-      stargazers_count: 5,
-      forks_count: 2,
-      language: 'Python',
+      name: 'Temp-RDP',
+      description: 'On-demand remote environments — production-grade automation for ephemeral Windows/Linux instances.',
+      html_url: profileUrl + '/Temp-RDP',
+      stargazers_count: 2,
+      forks_count: 0,
+      language: 'Shell',
       updated_at: '2025-12-15T10:00:00Z',
       created_at: '2024-06-01T00:00:00Z',
       fork: false
     },
     {
-      name: 'web-components',
-      description: 'Reusable web components library with modern CSS.',
-      html_url: profileUrl + '/web-components',
-      stargazers_count: 2,
+      name: 'DarkZino_SuperUser',
+      description: 'Advanced automation utilities and system tools.',
+      html_url: profileUrl + '/DarkZino_SuperUser',
+      stargazers_count: 0,
       forks_count: 0,
-      language: 'TypeScript',
+      language: 'Python',
       updated_at: '2025-11-20T08:00:00Z',
       created_at: '2024-03-01T00:00:00Z',
       fork: false
     },
     {
-      name: 'cli-tools',
-      description: 'Command-line utilities for developers.',
-      html_url: profileUrl + '/cli-tools',
-      stargazers_count: 1,
+      name: 'Darkzino-websites',
+      description: 'Web projects and portfolio sites.',
+      html_url: profileUrl + '/Darkzino-websites',
+      stargazers_count: 0,
       forks_count: 0,
-      language: 'Go',
+      language: 'HTML',
       updated_at: '2025-10-10T14:00:00Z',
       created_at: '2024-02-01T00:00:00Z',
       fork: false
     },
     {
-      name: 'learning-notes',
-      description: 'Documentation and notes from learning various technologies.',
-      html_url: profileUrl + '/learning-notes',
-      stargazers_count: 0,
+      name: 'automation-toolkit',
+      description: 'Python automation scripts for web scraping, API integration, and workflow automation.',
+      html_url: profileUrl + '/automation-toolkit',
+      stargazers_count: 1,
       forks_count: 0,
-      language: 'Markdown',
+      language: 'Python',
       updated_at: '2025-09-05T09:00:00Z',
       created_at: '2023-06-01T00:00:00Z',
       fork: false
     },
     {
-      name: 'api-starter',
-      description: 'Minimal REST API starter template with best practices.',
-      html_url: profileUrl + '/api-starter',
-      stargazers_count: 4,
-      forks_count: 1,
-      language: 'JavaScript',
+      name: 'devops-scripts',
+      description: 'CI/CD pipelines and GitHub Actions workflows for automated testing and deployment.',
+      html_url: profileUrl + '/devops-scripts',
+      stargazers_count: 0,
+      forks_count: 0,
+      language: 'Shell',
       updated_at: '2025-08-20T16:00:00Z',
       created_at: '2024-01-15T00:00:00Z',
       fork: false
     }
   ];
 
-  // Aggregated language statistics (customize to match your actual usage)
+  // Aggregated language statistics (based on real profile focus areas)
   const languages = [
-    { name: 'JavaScript', bytes: 55000, count: 4, color: '#f7df1e' },
-    { name: 'Python', bytes: 35000, count: 2, color: '#3776ab' },
-    { name: 'TypeScript', bytes: 28000, count: 2, color: '#3178c6' },
-    { name: 'HTML', bytes: 22000, count: 3, color: '#e34c26' },
-    { name: 'CSS', bytes: 18000, count: 3, color: '#563d7c' },
-    { name: 'Go', bytes: 12000, count: 1, color: '#00add8' }
+    { name: 'Python', bytes: 65000, count: 12, color: '#3776ab' },
+    { name: 'Shell', bytes: 45000, count: 8, color: '#89e051' },
+    { name: 'HTML', bytes: 28000, count: 6, color: '#e34c26' },
+    { name: 'JavaScript', bytes: 22000, count: 5, color: '#f7df1e' },
+    { name: 'CSS', bytes: 15000, count: 4, color: '#563d7c' },
+    { name: 'Dockerfile', bytes: 8000, count: 3, color: '#384d54' }
   ];
 
   return {

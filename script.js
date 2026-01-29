@@ -51,7 +51,7 @@
   // CONFIGURATION — Change username here to customize for your profile
   // ═══════════════════════════════════════════════════════════════════════════
   
-  const GITHUB_USERNAME = 'Deepankar-Siddharth';
+  const GITHUB_USERNAME = 'deepankar-siddharth';
   const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour cache TTL
   const CACHE_KEYS = {
     user: 'github_user_' + GITHUB_USERNAME,
