@@ -1,43 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Deepankar Siddharth | Developer</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <style>
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont;
-      background: #0f172a;
-      color: #e5e7eb;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-    }
-    .card {
-      text-align: center;
-      padding: 40px;
-      background: #020617;
-      border-radius: 14px;
-      box-shadow: 0 0 40px rgba(0,0,0,0.6);
-    }
-    h1 { margin-bottom: 10px; }
-    p { opacity: 0.8; }
-    a {
-      color: #38bdf8;
-      text-decoration: none;
-      margin: 0 10px;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Deepankar Siddharth — Developer, automation, bots, and web apps. Personal portfolio and projects.">
+  <meta name="author" content="Deepankar Siddharth">
+  <meta name="theme-color" content="#0d1117">
+  <title>Deepankar Siddharth | Developer Portfolio</title>
+  <!-- Preconnect for fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="card">
-    <h1>Deepankar Siddharth</h1>
-    <p>Developer • Automation • Bots • Web Apps</p>
-    <p>
-      <a href="https://github.com/deepankar-siddharth" target="_blank">GitHub</a>
-    </p>
-  </div>
+  <!-- Skip link for accessibility -->
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <!-- ========== HERO ========== -->
+  <header class="hero" id="hero">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <nav class="nav" role="navigation">
+      <a href="#hero" class="nav-logo">DS</a>
+      <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+    <div class="hero-content">
+      <p class="hero-greeting">Hi, I'm</p>
+      <h1 class="hero-name">Deepankar Siddharth</h1>
+      <p class="hero-tagline">Developer · Automation · Bots · Web Apps</p>
+      <p class="hero-desc">Building things that work — from scripts to full-stack applications.</p>
+      <div class="hero-cta">
+        <a href="https://github.com/deepankar-sidharth" class="btn btn-primary" target="_blank" rel="noopener noreferrer">View GitHub</a>
+        <a href="#contact" class="btn btn-secondary">Get in Touch</a>
+      </div>
+    </div>
+    <div class="hero-scroll" aria-hidden="true">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- ========== ABOUT ========== -->
+    <section class="section about" id="about" aria-labelledby="about-heading">
+      <div class="container">
+        <h2 id="about-heading" class="section-title">About Me</h2>
+        <div class="about-content">
+          <div class="about-text">
+            <p>
+              I'm a developer who loves building, learning, and shipping. Whether it's automating workflows,
+              crafting bots, or building web applications — I focus on creating solutions that are reliable
+              and enjoyable to use.
+            </p>
+            <p>
+              I believe in continuous learning and putting ideas into code. My work spans frontend, backend,
+              and automation — always with an eye for clean architecture and user experience.
+            </p>
+          </div>
+          <div class="about-accent" aria-hidden="true"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== SKILLS / TECH STACK ========== -->
+    <section class="section skills" id="skills" aria-labelledby="skills-heading">
+      <div class="container">
+        <h2 id="skills-heading" class="section-title">Skills & Tech Stack</h2>
+        <div class="skills-grid">
+          <article class="skill-card">
+            <div class="skill-icon" aria-hidden="true">◇</div>
+            <h3>Frontend</h3>
+            <p>HTML, CSS, JavaScript, responsive design, accessibility</p>
+          </article>
+          <article class="skill-card">
+            <div class="skill-icon" aria-hidden="true">◆</div>
+            <h3>Backend</h3>
+            <p>Node.js, APIs, databases, server-side logic</p>
+          </article>
+          <article class="skill-card">
+            <div class="skill-icon" aria-hidden="true">◈</div>
+            <h3>Automation & Bots</h3>
+            <p>Scripts, workflows, chatbots, integrations</p>
+          </article>
+          <article class="skill-card">
+            <div class="skill-icon" aria-hidden="true">◎</div>
+            <h3>Tools</h3>
+            <p>Git, VS Code, CLI, testing, deployment</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== PROJECTS ========== -->
+    <section class="section projects" id="projects" aria-labelledby="projects-heading">
+      <div class="container">
+        <h2 id="projects-heading" class="section-title">Projects</h2>
+        <div class="projects-grid">
+          <article class="project-card">
+            <h3>Project One</h3>
+            <p>Short description of your first project. Replace with real details and link.</p>
+            <a href="https://github.com/deepankar-sidharth" class="project-link" target="_blank" rel="noopener noreferrer">View on GitHub →</a>
+          </article>
+          <article class="project-card">
+            <h3>Project Two</h3>
+            <p>Short description of your second project. Easy to customize and add more.</p>
+            <a href="https://github.com/deepankar-sidharth" class="project-link" target="_blank" rel="noopener noreferrer">View on GitHub →</a>
+          </article>
+          <article class="project-card">
+            <h3>Project Three</h3>
+            <p>Short description of your third project. Duplicate cards to add more.</p>
+            <a href="https://github.com/deepankar-sidharth" class="project-link" target="_blank" rel="noopener noreferrer">View on GitHub →</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== CONTACT / FOOTER ========== -->
+    <footer class="footer" id="contact">
+      <div class="container">
+        <h2 class="footer-heading">Get in Touch</h2>
+        <p class="footer-desc">Open to collaboration and interesting projects.</p>
+        <a href="https://github.com/deepankar-sidharth" class="footer-github" target="_blank" rel="noopener noreferrer">
+          <span class="footer-github-icon" aria-hidden="true">↗</span>
+          github.com/deepankar-sidharth
+        </a>
+        <div class="footer-bottom">
+          <p>© <span id="year"></span> Deepankar Siddharth. Built for GitHub Pages.</p>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <script src="main.js"></script>
 </body>
 </html>
