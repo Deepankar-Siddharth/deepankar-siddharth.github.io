@@ -3,135 +3,403 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Deepankar Siddharth — Developer. GitHub-powered portfolio. Building, learning, shipping.">
+
+  <!-- Primary SEO -->
+  <title>Deepankar Siddharth — Developer | Automation, Android & Web</title>
+  <meta name="description" content="Deepankar Siddharth is a developer building web applications, automation tools, Android apps and APIs. Explore his projects, tech stack and GitHub work at deepankar.is-a-dev.">
   <meta name="author" content="Deepankar Siddharth">
-  <meta name="theme-color" content="#0d1117">
-  <title>Deepankar Siddharth | Developer</title>
+  <meta name="keywords" content="Deepankar Siddharth, Deepankar Developer, Deepankar Siddharth GitHub, Deepankar Siddharth Portfolio, automation developer, Android developer, Kotlin, React, Python">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#05080c">
+  <meta name="color-scheme" content="dark">
+  <link rel="canonical" href="https://deepankar.is-a.dev/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Deepankar Siddharth">
+  <meta property="og:title" content="Deepankar Siddharth — Developer">
+  <meta property="og:description" content="Developer building web applications, automation tools, Android apps and APIs. Backed by real GitHub work.">
+  <meta property="og:url" content="https://deepankar.is-a.dev/">
+  <meta property="og:image" content="https://github.com/deepankar-siddharth.png">
+  <meta property="og:locale" content="en_US">
+
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:site" content="@DeepankarZino">
+  <meta name="twitter:title" content="Deepankar Siddharth — Developer">
+  <meta name="twitter:description" content="Developer building web applications, automation tools, Android apps and APIs.">
+  <meta name="twitter:image" content="https://github.com/deepankar-siddharth.png">
+
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="icon.png">
+  <link rel="apple-touch-icon" href="icon.png">
+
+  <!-- Structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Deepankar Siddharth",
+    "url": "https://deepankar.is-a.dev/",
+    "image": "https://github.com/deepankar-siddharth.png",
+    "sameAs": [
+      "https://github.com/deepankar-siddharth",
+      "https://twitter.com/DeepankarZino"
+    ],
+    "jobTitle": "Developer",
+    "description": "Developer building web applications, automation tools, Android apps and APIs."
+  }
+  </script>
 </head>
 <body>
   <a href="#main" class="skip-link">Skip to main content</a>
 
+  <!-- Navigation -->
   <header class="header" role="banner">
     <nav class="nav" aria-label="Main navigation">
-      <a href="#hero" class="nav-logo">DS</a>
-      <ul class="nav-links">
-        <li><a href="#hero">Home</a></li>
-        <li><a href="#projects">Projects</a></li>
-        <li><a href="#skills">Skills</a></li>
-        <li><a href="#timeline">Timeline</a></li>
-        <li><a href="#contact">Contact</a></li>
+      <a href="#hero" class="nav-brand" aria-label="Home">
+        <img src="icon.png" alt="" class="nav-brand-logo" width="26" height="26">
+        <span class="nav-brand-text">Deepankar Siddharth</span>
+      </a>
+      <ul class="nav-links" id="nav-menu">
+        <li><a href="#work" class="nav-link" data-section="work"><span class="nav-link-num">01</span><span class="nav-link-label">Work</span></a></li>
+        <li><a href="#about" class="nav-link" data-section="about"><span class="nav-link-num">02</span><span class="nav-link-label">About</span></a></li>
+        <li><a href="#stack" class="nav-link" data-section="stack"><span class="nav-link-num">03</span><span class="nav-link-label">Stack</span></a></li>
+        <li><a href="#github" class="nav-link" data-section="github"><span class="nav-link-num">04</span><span class="nav-link-label">GitHub</span></a></li>
+        <li><a href="#journey" class="nav-link" data-section="journey"><span class="nav-link-num">05</span><span class="nav-link-label">Journey</span></a></li>
+        <li><a href="#contact" class="nav-link" data-section="contact"><span class="nav-link-num">06</span><span class="nav-link-label">Contact</span></a></li>
       </ul>
-      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
-        <span></span>
-        <span></span>
-        <span></span>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-menu">
+        <span class="nav-toggle-line" aria-hidden="true"></span>
+        <span class="nav-toggle-line" aria-hidden="true"></span>
+        <span class="nav-toggle-line" aria-hidden="true"></span>
       </button>
     </nav>
   </header>
 
   <main id="main">
-    <!-- Hero — GitHub Identity Core -->
+
+    <!-- HERO - Asymmetric layout -->
     <section id="hero" class="hero" aria-labelledby="hero-heading">
       <div class="hero-bg" aria-hidden="true"></div>
-      <div class="hero-content container">
-        <div class="hero-skeleton" aria-hidden="true">
-          <div class="skeleton-orb"></div>
-          <div class="skeleton-line skeleton-name"></div>
-          <div class="skeleton-line skeleton-bio"></div>
-          <div class="skeleton-stats">
-            <span class="skeleton-pill"></span>
-            <span class="skeleton-pill"></span>
-            <span class="skeleton-pill"></span>
-          </div>
-        </div>
-        <div class="hero-content-inner hidden" id="hero-content">
-          <div class="hero-orb" aria-hidden="true"></div>
-          <h1 id="hero-heading" class="hero-name">—</h1>
-          <p class="hero-bio">—</p>
-          <div class="hero-stats" aria-label="GitHub stats"></div>
-          <div class="hero-cta">
-            <a href="https://github.com/deepankar-siddharth" class="btn btn-primary" id="hero-github-link" target="_blank" rel="noopener noreferrer">
-              <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-              </svg>
-              GitHub
+      
+      <div class="container hero-grid">
+        <!-- Left: Identity -->
+        <div class="hero-content">
+          <p class="hero-eyebrow" aria-hidden="true">
+            <span class="hero-eyebrow-num">00</span>
+            <span class="hero-eyebrow-text">SYSTEM / IDENTITY</span>
+          </p>
+          <h1 id="hero-heading" class="hero-name">
+            <span class="hero-name-line">Deepankar</span>
+            <span class="hero-name-line">Siddharth</span>
+          </h1>
+          <p class="hero-headline" id="hero-headline">I build software that eliminates repetitive work.</p>
+          <p class="hero-subline">Developer • Automation • Android</p>
+          
+          <div class="hero-cta-group">
+            <a href="#work" class="btn btn-primary">
+              <span class="btn-text">Explore Work</span>
+              <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
-            <a href="#contact" class="btn btn-secondary">Contact</a>
+            <a href="https://github.com/deepankar-siddharth" class="btn btn-ghost" target="_blank" rel="noopener noreferrer">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+              <span class="btn-text">GitHub</span>
+            </a>
+          </div>
+
+          <!-- Verified GitHub stats -->
+          <div class="hero-metrics" id="hero-metrics" aria-label="GitHub metrics">
+            <div class="hero-metric">
+              <span class="hero-metric-value" id="hm-repos">—</span>
+              <span class="hero-metric-label">Repos</span>
+            </div>
+            <div class="hero-metric">
+              <span class="hero-metric-value" id="hm-stars">—</span>
+              <span class="hero-metric-label">Stars</span>
+            </div>
+            <div class="hero-metric">
+              <span class="hero-metric-value" id="hm-forks">—</span>
+              <span class="hero-metric-label">Forks</span>
+            </div>
+            <div class="hero-metric">
+              <span class="hero-metric-value" id="hm-followers">—</span>
+              <span class="hero-metric-label">Followers</span>
+            </div>
           </div>
         </div>
+
+        <!-- Right: Terminal Panel -->
+        <div class="hero-terminal" aria-label="Terminal status panel">
+          <div class="terminal-window" id="term-window">
+            <div class="terminal-chrome">
+              <div class="terminal-dots" aria-hidden="true">
+                <span></span><span></span><span></span>
+              </div>
+              <div class="terminal-title">~/deepankar</div>
+            </div>
+            <div class="terminal-body">
+              <div class="terminal-line terminal-line--cmd">
+                <span class="terminal-prompt">$</span>
+                <span class="terminal-command" id="term-cmd"></span>
+              </div>
+              <div class="terminal-output" id="term-output"></div>
+              <div class="terminal-line terminal-line--idle">
+                <span class="terminal-prompt">$</span>
+                <span class="terminal-cursor" aria-hidden="true"></span>
+              </div>
+            </div>
+          </div>
+          <p class="terminal-caption">status / <span id="term-status">initializing</span></p>
+        </div>
       </div>
+
       <div class="hero-scroll" aria-hidden="true">
-        <span>Scroll</span>
-        <div class="scroll-line"></div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
       </div>
     </section>
 
-    <!-- Projects — Repository Constellation -->
-    <section id="projects" class="section section-projects" aria-labelledby="projects-heading">
+    <!-- PHILOSOPHY -->
+    <section class="philosophy" aria-label="Philosophy">
+      <div class="philosophy-inner" data-reveal>
+        <p class="philosophy-quote"><span class="philosophy-quote-mark">&quot;</span>If you have to do it twice, write a script.<span class="philosophy-quote-mark">&quot;</span></p>
+        <p class="philosophy-attr">&mdash; Deepankar&rsquo;s rule of thumb</p>
+      </div>
+    </section>
+
+    <!-- TICKER -->
+    <div class="ticker" role="presentation" aria-hidden="true">
+      <div class="ticker-track" id="ticker-track"></div>
+    </div>
+
+    <!-- ABOUT -->
+    <section id="about" class="section" aria-labelledby="about-heading">
       <div class="container">
-        <h2 id="projects-heading" class="section-title">Repository Constellation</h2>
-        <p class="section-subtitle">Repos as stars. Size by stars, color by language. Click to open.</p>
-        <div class="projects-skeleton" aria-hidden="true">
-          <div class="skeleton-constellation">
-            <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+        <header class="section-header">
+          <p class="section-eyebrow"><span class="section-num">01</span> SYSTEM / ABOUT</p>
+          <h2 id="about-heading" class="section-title">I automate the boring parts.</h2>
+        </header>
+        
+        <div class="about-grid">
+          <div class="about-narrative">
+            <p>I'm a developer based in India who builds software that solves real, everyday problems — automation tools that remove repetitive work, privacy-first Android apps, and full-stack web applications. I've been shipping code on GitHub since 2020.</p>
+            <p>My approach is pragmatic: if you have to do it twice, write a script. I care about tools that actually get used, keeping data private by default, and shipping software that stays fast and maintainable rather than chasing the latest stack.</p>
+            <p class="about-philosophy">"If you have to do it twice, write a script."</p>
+          </div>
+
+          <div class="about-specs" aria-label="Developer specifications">
+            <dl class="spec-list">
+              <div class="spec-row" data-reveal>
+                <dt class="spec-key">FOCUS</dt>
+                <dd class="spec-value">Automation / Android</dd>
+              </div>
+              <div class="spec-row" data-reveal style="--d:60ms">
+                <dt class="spec-key">BUILDING</dt>
+                <dd class="spec-value">Instant Ledger</dd>
+              </div>
+              <div class="spec-row" data-reveal style="--d:120ms">
+                <dt class="spec-key">SINCE</dt>
+                <dd class="spec-value">2020</dd>
+              </div>
+              <div class="spec-row" data-reveal style="--d:180ms">
+                <dt class="spec-key">LOCATION</dt>
+                <dd class="spec-value">India</dd>
+              </div>
+              <div class="spec-row" data-reveal style="--d:240ms">
+                <dt class="spec-key">PHILOSOPHY</dt>
+                <dd class="spec-value">If you have to do it twice, write a script.</dd>
+              </div>
+            </dl>
           </div>
         </div>
-        <div class="constellation hidden" aria-label="GitHub repositories"></div>
       </div>
     </section>
 
-    <!-- Skills — Technology Aura (from repo languages) -->
-    <section id="skills" class="section section-skills" aria-labelledby="skills-heading">
+    <!-- PROJECTS / WORK -->
+    <section id="work" class="section section-alt" aria-labelledby="work-heading">
       <div class="container">
-        <h2 id="skills-heading" class="section-title">Technology Aura</h2>
-        <p class="section-subtitle">Languages from your repositories.</p>
-        <div class="skills-skeleton" aria-hidden="true">
-          <div class="skeleton-orbits">
-            <div class="skeleton-orbit-ring"></div>
-            <div class="skeleton-orbit-ring"></div>
-            <div class="skeleton-orbit-ring"></div>
+        <header class="section-header">
+          <p class="section-eyebrow"><span class="section-num">02</span> SELECTED / WORK</p>
+          <h2 id="work-heading" class="section-title">Selected projects</h2>
+          <p class="section-subtitle">Curated repositories representing the work I build and maintain.</p>
+        </header>
+
+        <div class="project-filters" id="project-filters" role="group" aria-label="Filter projects by category"></div>
+
+        <!-- Flagship Project: Instant Ledger -->
+        <article class="project-flagship" id="project-flagship" data-category="Android">
+          <div class="project-flagship-num">01</div>
+          <div class="project-flagship-content">
+            <header class="project-flagship-header">
+              <div class="project-flagship-meta">
+                <span class="project-category">Android</span>
+                <span class="project-status active" data-status="active">Active</span>
+              </div>
+              <h3 class="project-flagship-title">
+                <a href="https://github.com/deepankar-siddharth/instant-ledger" target="_blank" rel="noopener noreferrer">Instant Ledger</a>
+              </h3>
+            </header>
+            <p class="project-flagship-desc">Privacy-first, offline-only finance ledger for Android that captures transactions automatically from bank SMS and protects them on-device with SQLCipher encryption and biometric lock.</p>
+            <div class="project-flagship-stack" id="flagship-stack"></div>
+            <div class="project-flagship-metrics" id="flagship-metrics">
+              <div class="project-metric"><span class="project-metric-value" id="fl-stars">—</span><span class="project-metric-label">Stars</span></div>
+              <div class="project-metric"><span class="project-metric-value" id="fl-forks">—</span><span class="project-metric-label">Forks</span></div>
+              <div class="project-metric"><span class="project-metric-value" id="fl-updated">—</span><span class="project-metric-label">Updated</span></div>
+            </div>
+            <div class="project-flagship-action">
+              <a href="https://github.com/deepankar-siddharth/instant-ledger" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
+                <span class="btn-text">View Repository</span>
+                <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Secondary Projects Grid -->
+        <div class="projects-grid" id="projects-grid" role="list"></div>
+      </div>
+    </section>
+
+    <!-- STACK / CAPABILITIES -->
+    <section id="stack" class="section" aria-labelledby="stack-heading">
+      <div class="container">
+        <header class="section-header">
+          <p class="section-eyebrow"><span class="section-num">03</span> STACK / CAPABILITIES</p>
+          <h2 id="stack-heading" class="section-title">Technologies I build with</h2>
+          <p class="section-subtitle">Verified from the tools, languages and dependencies used across my repositories.</p>
+        </header>
+        
+        <div class="stack-matrix" id="stack-matrix"></div>
+      </div>
+    </section>
+
+    <!-- GITHUB COMMAND CENTER -->
+    <section id="github" class="section section-alt" aria-labelledby="github-heading">
+      <div class="container">
+        <header class="section-header">
+          <p class="section-eyebrow"><span class="section-num">04</span> GITHUB / COMMAND CENTER</p>
+          <h2 id="github-heading" class="section-title">GitHub analytics</h2>
+          <p class="section-subtitle">Live data from my public profile. Falls back to cached snapshot if API unavailable.</p>
+        </header>
+
+        <div class="gh-shell" data-reveal>
+          <div class="gh-chrome">
+            <span class="gh-chrome-title">
+              <span class="gh-chrome-dots"><i></i><i></i><i></i></span>
+              github / deepankar-siddharth
+            </span>
+            <span class="gh-status" id="github-status" aria-live="polite">
+              <span class="gh-status-dot" id="gh-status-indicator"></span>
+              <span class="gh-status-text" id="gh-status-text">Loading&hellip;</span>
+            </span>
+          </div>
+          <div class="gh-body">
+            <!-- Metrics Row -->
+            <div class="gh-metrics" id="github-metrics" role="list" aria-label="Repository metrics">
+              <div class="gh-metric" role="listitem">
+                <span class="gh-metric-label">Public Repos</span>
+                <span class="gh-metric-value" id="gh-repos">&mdash;</span>
+              </div>
+              <div class="gh-metric" role="listitem">
+                <span class="gh-metric-label">Total Stars</span>
+                <span class="gh-metric-value" id="gh-stars">&mdash;</span>
+              </div>
+              <div class="gh-metric" role="listitem">
+                <span class="gh-metric-label">Total Forks</span>
+                <span class="gh-metric-value" id="gh-forks">&mdash;</span>
+              </div>
+              <div class="gh-metric" role="listitem">
+                <span class="gh-metric-label">Followers</span>
+                <span class="gh-metric-value" id="gh-followers">&mdash;</span>
+              </div>
+              <div class="gh-metric" role="listitem">
+                <span class="gh-metric-label">Following</span>
+                <span class="gh-metric-value" id="gh-following">&mdash;</span>
+              </div>
+              <div class="gh-metric" role="listitem">
+                <span class="gh-metric-label">On GitHub Since</span>
+                <span class="gh-metric-value" id="gh-since">&mdash;</span>
+              </div>
+            </div>
+
+            <!-- Analytics Panels -->
+            <div class="gh-panels">
+              <div class="gh-panel">
+                <h3 class="gh-panel-title">Language Distribution</h3>
+                <p class="gh-panel-sub">By primary language across repositories</p>
+                <div class="lang-distribution" id="lang-distribution" aria-label="Language distribution chart"></div>
+              </div>
+
+              <div class="gh-panel">
+                <h3 class="gh-panel-title">Recent Activity</h3>
+                <p class="gh-panel-sub">Most recently updated repositories</p>
+                <ul class="gh-activity" id="github-activity" aria-label="Recent repository activity"></ul>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="skills-wrapper hidden">
-          <div class="skills-orbits" aria-hidden="true"></div>
-          <div class="skills-aura"></div>
+      </div>
+    </section>
+
+    <!-- JOURNEY -->
+    <section id="journey" class="section" aria-labelledby="journey-heading">
+      <div class="container">
+        <header class="section-header">
+          <p class="section-eyebrow"><span class="section-num">05</span> LOG / JOURNEY</p>
+          <h2 id="journey-heading" class="section-title">Development journey</h2>
+          <p class="section-subtitle">Milestones across my public GitHub history — a log of building, not an employment record.</p>
+        </header>
+        
+        <ol class="journey-log" id="journey-log" aria-label="Development timeline"></ol>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="section section-alt" aria-labelledby="contact-heading">
+      <div class="container">
+        <header class="section-header">
+          <p class="section-eyebrow"><span class="section-num">06</span> LINK / CONTACT</p>
+          <h2 id="contact-heading" class="section-title">Let's build something</h2>
+          <p class="section-subtitle">Open to discussing projects, automation ideas, or collaborating on open source.</p>
+        </header>
+        
+        <div class="contact-links">
+          <a href="https://github.com/deepankar-siddharth" class="contact-link" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+            <span>GitHub</span>
+            <svg class="contact-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+          <a href="https://twitter.com/DeepankarZino" class="contact-link" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            <span>@DeepankarZino</span>
+            <svg class="contact-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+          <a href="https://deepankar.is-a.dev" class="contact-link" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            <span>deepankar.is-a.dev</span>
+            <svg class="contact-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
         </div>
       </div>
     </section>
 
-    <!-- Timeline — Code Pulse -->
-    <section id="timeline" class="section section-timeline" aria-labelledby="timeline-heading">
-      <div class="container">
-        <h2 id="timeline-heading" class="section-title">Code Pulse</h2>
-        <p class="section-subtitle">Recent activity.</p>
-        <div class="timeline-skeleton" aria-hidden="true">
-          <div class="skeleton-timeline">
-            <div class="skeleton-tline-item"></div>
-            <div class="skeleton-tline-item"></div>
-            <div class="skeleton-tline-item"></div>
-          </div>
+    <!-- FOOTER -->
+    <footer class="footer" role="contentinfo">
+      <div class="container footer-grid">
+        <div class="footer-brand">
+          <p class="footer-name">Deepankar Siddharth</p>
+          <p class="footer-tagline">Built with code, curiosity & automation.</p>
         </div>
-        <div class="timeline-list hidden"></div>
-      </div>
-    </section>
-
-    <!-- Footer -->
-    <footer id="contact" class="footer" role="contentinfo">
-      <div class="container">
-        <p class="snapshot-indicator hidden" role="status">Snapshot</p>
-        <h2 class="footer-heading">Get in Touch</h2>
-        <p class="footer-text">Find me on GitHub.</p>
-        <a href="https://github.com/deepankar-siddharth" class="footer-github" id="footer-github-link" target="_blank" rel="noopener noreferrer" aria-label="GitHub profile">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-          </svg>
-          <span id="footer-github-text">github.com/deepankar-siddharth</span>
-        </a>
-        <p class="footer-copy">&copy; <span id="year"></span> Deepankar Siddharth. GitHub Pages.</p>
+        <div class="footer-actions">
+          <a href="https://github.com/deepankar-siddharth" class="footer-link" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a href="#hero" class="footer-link footer-top">↑ Back to top</a>
+        </div>
+        <p class="footer-copy">© <span id="year"></span> Deepankar Siddharth</p>
       </div>
     </footer>
   </main>
