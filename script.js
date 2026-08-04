@@ -1,719 +1,748 @@
 /**
  * ============================================================================
- * CINEMATIC GITHUB PORTFOLIO — Main Application Script
+ * Deepankar Siddharth — Developer Portfolio
  * ============================================================================
- * 
- * A visually stunning, GitHub-powered personal portfolio that creates an
- * immersive, cinematic experience. All data is fetched from the public
- * GitHub API (no authentication required) with intelligent caching and
- * graceful fallback handling.
- * 
- * ARCHITECTURE OVERVIEW:
- * ──────────────────────
- * 1. DATA LAYER:
- *    - Fetches from GitHub API (public endpoints, no auth)
- *    - Caches responses in localStorage (1-hour TTL)
- *    - Falls back to local data if API and cache unavailable
- *    - UI remains identical regardless of data source
- * 
- * 2. RENDER FUNCTIONS:
- *    - renderHero()      → Avatar orb, name, bio, stats with staggered animations
- *    - renderProjects()  → Repository constellation with star layout
- *    - renderSkills()    → Orbital rings + progress bars from languages
- *    - renderTimeline()  → Scroll-triggered activity feed
- * 
- * 3. VISUAL EFFECTS:
- *    - Particle system with floating elements
- *    - Mouse-reactive lighting on hero background
- *    - Orb parallax following cursor movement
- *    - Scroll-based reveal animations
- * 
- * TO CUSTOMIZE:
- * ─────────────
- * Change GITHUB_USERNAME below to your GitHub username. All API calls,
- * links, and cache keys are derived from this single variable. Also update
- * fallback-data.js to match for consistent offline experience.
- * 
- * GITHUB API ENDPOINTS USED:
- * - GET /users/{username}
- * - GET /users/{username}/repos
- * 
- * Rate limit: 60 requests/hour for unauthenticated requests.
- * The caching strategy ensures minimal API calls.
- * 
+ * Vanilla JS, GitHub-powered. No frameworks, no build step.
+ *
+ * Architecture:
+ *  1. DATA LAYER — GitHub REST API (public, no auth) with 1-hour localStorage
+ *     cache and a verified fallback snapshot. UI never breaks if the API fails.
+ *  2. CURATED CONTENT — Stack, featured projects and the Journey sections are
+ *     authored directly from verified GitHub evidence so the portfolio is
+ *     always meaningful even offline.
+ *  3. LIVE ENRICHMENT — Metrics, language distribution and recent activity are
+ *     computed from live repo data and refresh the featured project cards.
+ *
+ * Data source order: API -> cache -> fallback. The GitHub shell's status
+ * indicator reflects which source is in use (LIVE / CACHED / SNAPSHOT).
  * ============================================================================
  */
 
 (function () {
   'use strict';
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // CONFIGURATION — Change username here to customize for your profile
-  // ═══════════════════════════════════════════════════════════════════════════
-  
-  const GITHUB_USERNAME = 'deepankar-siddharth';
-  const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour cache TTL
-  const CACHE_KEYS = {
+  var GITHUB_USERNAME = 'deepankar-siddharth';
+  var CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
+  var CACHE_KEYS = {
     user: 'github_user_' + GITHUB_USERNAME,
     repos: 'github_repos_' + GITHUB_USERNAME,
     ts: 'github_cache_ts'
   };
+  var REDUCED_MOTION = window.matchMedia &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // LANGUAGE COLORS — Visual mapping for programming languages
-  // ═══════════════════════════════════════════════════════════════════════════
-  
-  const LANGUAGE_COLORS = {
-    JavaScript: '#f7df1e',
+  // GitHub primary-language colors (verified palette)
+  var LANG_COLOR = {
+    JavaScript: '#f1e05a',
     TypeScript: '#3178c6',
-    Python: '#3776ab',
-    HTML: '#e34c26',
-    CSS: '#563d7c',
-    Vue: '#41b883',
-    Java: '#b07219',
-    'C#': '#239120',
-    Ruby: '#701516',
-    Go: '#00add8',
-    Rust: '#dea584',
-    PHP: '#4f5d95',
-    'C++': '#f34b7d',
+    Python: '#3572A5',
     Kotlin: '#a97bff',
-    Swift: '#f05138',
+    'HTML': '#e34c26',
+    'CSS': '#563d7c',
     Shell: '#89e051',
-    SCSS: '#c6538c',
-    Lua: '#000080'
+    Batchfile: '#C1F12E',
+    PowerShell: '#012456',
+    Java: '#b07219',
+    'C++': '#f34b7d',
+    Go: '#00add8',
+    Ruby: '#701516',
+    PHP: '#4f5d95',
+    Jupyter: '#DA5B0B'
   };
-  const DEFAULT_LANG_COLOR = '#8b949e';
+  var DEFAULT_COLOR = '#8b949e';
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // CACHE LAYER — localStorage persistence for API responses
-  // ═══════════════════════════════════════════════════════════════════════════
-  function getCached(key) {
+  // ————————————————————————————————————————————————————————————————
+  // CURATED CONTENT (verified from GitHub evidence)
+  // ————————————————————————————————————————————————————————————————
+
+  var STACK = [
+    { group: 'Languages', items: ['Python', 'JavaScript', 'Kotlin', 'Shell / Bash', 'HTML', 'CSS', 'PowerShell', 'Batchfile'] },
+    { group: 'Frontend', items: ['React.js', 'HTML5', 'CSS3', 'JavaScript (ES6+)'] },
+    { group: 'Backend', items: ['Node.js', 'Express', 'Python'] },
+    { group: 'Databases', items: ['MySQL', 'SQLite (Room)', 'SQLCipher'] },
+    { group: 'Android', items: ['Kotlin', 'Jetpack Compose', 'Room', 'Hilt', 'WorkManager', 'Material 3'] },
+    { group: 'DevOps & Automation', items: ['GitHub Actions', 'ngrok', 'Shell scripting', 'VPS provisioning'] },
+    { group: 'Tools & Platforms', items: ['Git', 'GitHub', 'Android Studio', 'Gradle', 'Termux'] }
+  ];
+
+  // Where each capability is evidenced in public repositories.
+  var STACK_USED = {
+    'Python': 'darkzino_superuser',
+    'JavaScript': 'event-sphere',
+    'Kotlin': 'instant-ledger',
+    'Shell / Bash': 'terminal_package_collection',
+    'HTML': 'darkzino-websites',
+    'CSS': 'darkzino_onion',
+    'PowerShell': 'Img',
+    'Batchfile': 'Temp-RDP',
+    'React.js': 'event-sphere',
+    'HTML5': 'darkzino-websites',
+    'CSS3': 'darkzino_onion',
+    'JavaScript (ES6+)': 'event-sphere',
+    'Node.js': 'event-sphere',
+    'Express': 'event-sphere',
+    'MySQL': 'event-sphere',
+    'SQLite (Room)': 'instant-ledger',
+    'SQLCipher': 'instant-ledger',
+    'Jetpack Compose': 'instant-ledger',
+    'Room': 'instant-ledger',
+    'Hilt': 'instant-ledger',
+    'WorkManager': 'instant-ledger',
+    'Material 3': 'instant-ledger',
+    'GitHub Actions': 'Temp-RDP',
+    'ngrok': 'Temp-RDP',
+    'Shell scripting': 'terminal_package_collection',
+    'VPS provisioning': 'Temp-RDP',
+    'Git': 'all repos',
+    'GitHub': 'all repos',
+    'Android Studio': 'instant-ledger',
+    'Gradle': 'instant-ledger',
+    'Termux': 'terminal_package_collection'
+  };
+
+  var FEATURED_PROJECTS = [
+    {
+      repo: 'instant-ledger',
+      title: 'Instant Ledger',
+      category: 'Android',
+      description: 'Privacy-first, offline-only finance ledger for Android that captures transactions automatically from bank SMS and protects them on-device with SQLCipher encryption and biometric lock.',
+      stack: ['Kotlin', 'Jetpack Compose', 'Room', 'SQLCipher', 'Hilt', 'WorkManager'],
+      status: 'Active',
+      statusType: 'active'
+    },
+    {
+      repo: 'Temp-RDP',
+      title: 'Temp-RDP',
+      category: 'Automation',
+      description: 'On-demand ephemeral Windows RDP environments provisioned through GitHub Actions with ngrok tunneling — infrastructure automation for testing and development.',
+      stack: ['GitHub Actions', 'Shell / Batch', 'ngrok'],
+      status: 'Active',
+      statusType: 'active'
+    },
+    {
+      repo: 'event-sphere',
+      title: 'Event Sphere',
+      category: 'Web',
+      description: 'Full-stack event management system handling booking, employee and package management, with JWT-authenticated React and Node.js/Express backed by MySQL.',
+      stack: ['React', 'Node.js', 'Express', 'MySQL', 'JWT'],
+      status: 'Experimental',
+      statusType: 'active'
+    },
+    {
+      repo: 'terminal_package_collection',
+      title: 'Terminal Package Collection',
+      category: 'Automation',
+      description: 'A curated Termux server-bootstrap toolkit — scripts and configuration templates for zero-touch provisioning of new environments.',
+      stack: ['Shell', 'Termux', 'Bash'],
+      status: 'Maintained',
+      statusType: 'active'
+    },
+    {
+      repo: 'DarkZino_SuperUser',
+      title: 'DarkZino SuperUser',
+      category: 'Python',
+      description: 'A Python Telegram userbot built on the Telethon library with a pluggable plugin structure — an early exercise in Python automation and bot development.',
+      stack: ['Python', 'Telethon', 'Pyrogram'],
+      status: 'Inactive',
+      statusType: 'archived'
+    }
+  ];
+
+  var JOURNEY = [
+    { year: '2020', title: 'First steps in the terminal', text: 'Created the Terminal Package Collection, a Termux server-bootstrap toolkit that set the recurring automation theme.' },
+    { year: '2021', title: 'Python and bots', text: 'Built DarkZino SuperUser, a Python Telegram userbot on Telethon, alongside early web experiments.' },
+    { year: '2022', title: 'Automating infrastructure', text: 'Shipped Temp-RDP: ephemeral Windows RDP provisioning driven by GitHub Actions and ngrok tunneling.' },
+    { year: '2023', title: 'System tooling', text: 'Explored PowerShell scripts and dark-themed static web projects.' },
+    { year: '2025', title: 'Full-stack and Android', text: 'Built Event Sphere (React/Node/MySQL) and started Instant Ledger (Kotlin/Compose/Room), a shift toward complete products.' },
+    { year: '2026', title: 'Shipping and focus', text: 'Continuing active development on Instant Ledger and Temp-RDP.' }
+  ];
+
+  var TERMINAL_WHOAMI = 'whoami';
+  var TERMINAL_ROLES = ['developer', 'automation', 'android', 'open-source'];
+
+  // Keywords shown in the decorative scrolling ticker band.
+  var TICKER = ['Kotlin', 'React', 'JavaScript', 'Python', 'Node.js', 'Express', 'MySQL', 'Room', 'SQLCipher', 'Compose', 'GitHub Actions', 'Termux', 'ngrok', 'PowerShell', 'Batchfile', 'Shell'];
+
+  // ————————————————————————————————————————————————————————————————
+  // CACHE LAYER
+  // ————————————————————————————————————————————————————————————————
+
+  function getCache(key) {
     try {
       var raw = localStorage.getItem(key);
-      if (!raw) return null;
-      return JSON.parse(raw);
-    } catch (e) {
-      return null;
-    }
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) { return null; }
   }
-
   function setCache(key, data) {
     try {
       localStorage.setItem(key, JSON.stringify(data));
       localStorage.setItem(CACHE_KEYS.ts, String(Date.now()));
     } catch (e) {}
   }
-
-  function isCacheStale() {
+  function isStale() {
     var ts = localStorage.getItem(CACHE_KEYS.ts);
-    if (!ts) return true;
-    return Date.now() - parseInt(ts, 10) > CACHE_TTL_MS;
+    return !ts || Date.now() - parseInt(ts, 10) > CACHE_TTL_MS;
   }
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // GITHUB API — Public endpoints (no authentication required)
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ————————————————————————————————————————————————————————————————
+  // GITHUB API
+  // ————————————————————————————————————————————————————————————————
+
   function fetchUser() {
-    return fetch('https://api.github.com/users/' + encodeURIComponent(GITHUB_USERNAME), {
-      headers: { Accept: 'application/vnd.github.v3+json' }
-    })
-      .then(function (res) {
-        if (!res.ok) throw new Error('User fetch failed');
-        return res.json();
-      })
+    return fetch('https://api.github.com/users/' + encodeURIComponent(GITHUB_USERNAME))
+      .then(function (res) { return res.ok ? res.json() : null; })
       .catch(function () { return null; });
   }
-
   function fetchRepos() {
-    return fetch('https://api.github.com/users/' + encodeURIComponent(GITHUB_USERNAME) + '/repos?per_page=100&sort=updated', {
-      headers: { Accept: 'application/vnd.github.v3+json' }
-    })
-      .then(function (res) {
-        if (!res.ok) throw new Error('Repos fetch failed');
-        return res.json();
-      })
+    return fetch('https://api.github.com/users/' + encodeURIComponent(GITHUB_USERNAME) + '/repos?per_page=100&sort=updated')
+      .then(function (res) { return res.ok ? res.json() : null; })
       .catch(function () { return null; });
   }
 
-  function aggregateLanguagesFromRepos(repos) {
-    if (!repos || !repos.length) return [];
-    var countByLang = {};
+  function aggregateLanguages(repos) {
+    if (!Array.isArray(repos) || !repos.length) return [];
+    var count = {};
     repos.forEach(function (r) {
       var lang = r.language || 'Other';
-      countByLang[lang] = (countByLang[lang] || 0) + 1;
+      count[lang] = (count[lang] || 0) + 1;
     });
     var total = repos.length;
-    return Object.keys(countByLang)
+    return Object.keys(count)
       .map(function (name) {
-        var count = countByLang[name];
         return {
           name: name,
-          count: count,
-          bytes: count * 10000,
-          color: LANGUAGE_COLORS[name] || DEFAULT_LANG_COLOR
+          count: count[name],
+          bytes: count[name] * 10000,
+          color: LANG_COLOR[name] || DEFAULT_COLOR
         };
       })
       .sort(function (a, b) { return b.count - a.count; });
   }
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // DATA STRATEGY — API → Cache → Fallback (never fails)
-  // ═══════════════════════════════════════════════════════════════════════════
   function getData() {
     return Promise.all([fetchUser(), fetchRepos()]).then(function (results) {
       var user = results[0];
       var repos = results[1];
-      if (user && repos && Array.isArray(repos)) {
+      if (user && Array.isArray(repos) && repos.length) {
         setCache(CACHE_KEYS.user, user);
         setCache(CACHE_KEYS.repos, repos);
-        return {
-          user: user,
-          repos: repos,
-          languages: aggregateLanguagesFromRepos(repos),
-          source: 'api'
-        };
+        return { user: user, repos: repos, languages: aggregateLanguages(repos), source: 'live' };
       }
-      user = getCached(CACHE_KEYS.user);
-      repos = getCached(CACHE_KEYS.repos);
-      if (user && repos && Array.isArray(repos)) {
-        return {
-          user: user,
-          repos: repos,
-          languages: aggregateLanguagesFromRepos(repos),
-          source: 'cache'
-        };
+      user = getCache(CACHE_KEYS.user);
+      var cachedRepos = getCache(CACHE_KEYS.repos);
+      if (user && Array.isArray(cachedRepos)) {
+        return { user: user, repos: cachedRepos, languages: aggregateLanguages(cachedRepos), source: 'cache' };
       }
-      var fallback = typeof FALLBACK_DATA !== 'undefined' ? FALLBACK_DATA : { user: {}, repos: [], languages: [] };
+      var fb = typeof FALLBACK_DATA !== 'undefined' ? FALLBACK_DATA : { user: {}, repos: [] };
       return {
-        user: fallback.user || {},
-        repos: fallback.repos || [],
-        languages: fallback.languages && fallback.languages.length ? fallback.languages : aggregateLanguagesFromRepos(fallback.repos || []),
-        source: fallback.source || 'fallback'
+        user: fb.user || {},
+        repos: fb.repos || [],
+        languages: (fb.languages && fb.languages.length) ? fb.languages : aggregateLanguages(fb.repos),
+        source: 'fallback'
       };
     });
   }
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // DOM REFERENCES — Populated on DOMContentLoaded
-  // ═══════════════════════════════════════════════════════════════════════════
-  var heroOrb, heroName, heroBio, heroStats, heroSkeleton, heroContent;
-  var constellationEl, projectsSkeleton;
-  var skillsAuraEl, skillsSkeleton;
-  var timelineEl, timelineSkeleton;
-  var snapshotIndicator;
+  // ————————————————————————————————————————————————————————————————
+  // DOM HELPERS
+  // ————————————————————————————————————————————————————————————————
 
-  function getEl(id) { return document.getElementById(id); }
-  function qs(sel, ctx) { return (ctx || document).querySelector(sel); }
-  function qsAll(sel, ctx) { return (ctx || document).querySelectorAll(sel); }
+  var $ = function (sel, ctx) { return (ctx || document).querySelector(sel); };
+  var $$ = function (sel, ctx) { return Array.prototype.slice.call((ctx || document).querySelectorAll(sel)); };
+  function esc(str) {
+    return String(str == null ? '' : str)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+  function fmtDate(iso) {
+    if (!iso) return '';
+    var d = new Date(iso);
+    return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric', day: 'numeric' });
+  }
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // RENDER FUNCTIONS — Transform data into visual UI
-  // ═══════════════════════════════════════════════════════════════════════════
+  // Deterministic pseudo-hash so the git log looks real without inventing data.
+  function pseudoHash(str) {
+    var h = 2166136261;
+    for (var i = 0; i < str.length; i++) {
+      h ^= str.charCodeAt(i);
+      h = (h * 16777619) >>> 0;
+    }
+    return h.toString(16).slice(0, 7).padStart(7, '0');
+  }
 
-  // ——— Hero: orb, name, bio, stats with staggered entrance ———
-  function renderHero(data) {
-    var user = data.user;
-    if (!heroContent || !heroSkeleton) return;
-    heroSkeleton.classList.add('hidden');
-    heroContent.classList.remove('hidden');
-    
-    // Trigger staggered entrance animations
-    requestAnimationFrame(function() {
-      heroContent.classList.add('hero-content--visible');
+  // ————————————————————————————————————————————————————————————————
+  // REVEAL OBSERVER
+  // ————————————————————————————————————————————————————————————————
+
+  var revealObserver = null;
+  function getRevealObserver() {
+    if (revealObserver) return revealObserver;
+    revealObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        var el = entry.target;
+        if (el.classList.contains('lang-row')) {
+          el.classList.add('is-in');
+        } else {
+          el.classList.add('is-revealed');
+        }
+        revealObserver.unobserve(el);
+      });
+    }, { threshold: 0.18, rootMargin: '0px 0px -8% 0px' });
+    return revealObserver;
+  }
+  function observeReveal(el) {
+    getRevealObserver().observe(el);
+  }
+
+  // Attach reveal to static blocks (added once).
+  function armStaticReveals() {
+    var selectors = [
+      '.hero-grid',
+      '.section-header',
+      '.about-grid',
+      '.contact-links',
+      '.project-filters'
+    ];
+    selectors.forEach(function (sel) {
+      $$(sel).forEach(function (el) {
+        if (!el.hasAttribute('data-reveal')) {
+          el.setAttribute('data-reveal', '');
+          observeReveal(el);
+        }
+      });
     });
+    // Elements that already carry data-reveal in the markup.
+    $$('[data-reveal]').forEach(observeReveal);
+  }
 
-    var name = (user.name || user.login || 'Developer').trim();
-    var bio = (user.bio || '').trim();
-    var avatarUrl = user.avatar_url;
-    var profileUrl = user.html_url || 'https://github.com/' + GITHUB_USERNAME;
+  // ————————————————————————————————————————————————————————————————
+  // COUNT-UP
+  // ————————————————————————————————————————————————————————————————
 
-    if (heroOrb) {
-      // Pulse animation is now handled by CSS when hero-content--visible is added
-      if (avatarUrl) {
-        heroOrb.style.backgroundImage = 'url(' + avatarUrl + ')';
-        heroOrb.style.backgroundSize = 'cover';
-        heroOrb.style.backgroundPosition = 'center';
+  function animateValue(el, target, opts) {
+    opts = opts || {};
+    var duration = opts.duration || 900;
+    var start = opts.start || 0;
+    if (REDUCED_MOTION) {
+      el.textContent = String(target);
+      return;
+    }
+    var startTime = null;
+    function frame(ts) {
+      if (startTime === null) startTime = ts;
+      var progress = Math.min((ts - startTime) / duration, 1);
+      var eased = 1 - Math.pow(1 - progress, 3);
+      var current = Math.round(start + (target - start) * eased);
+      el.textContent = current.toLocaleString('en-US');
+      if (progress < 1) {
+        window.requestAnimationFrame(frame);
       } else {
-        heroOrb.style.background = 'linear-gradient(135deg, var(--gradient-start), var(--gradient-end))';
+        el.textContent = target.toLocaleString('en-US');
       }
     }
-    if (heroName) heroName.textContent = name;
-    if (heroBio) heroBio.textContent = bio || 'Building, learning, shipping.';
-    if (heroStats) {
-      var repos = user.public_repos != null ? user.public_repos : 0;
-      var followers = user.followers != null ? user.followers : 0;
-      var stars = (data.repos || []).reduce(function (s, r) { return s + (r.stargazers_count || 0); }, 0);
-      heroStats.innerHTML =
-        '<span class="hero-stat"><strong>' + repos + '</strong> repos</span>' +
-        '<span class="hero-stat"><strong>' + followers + '</strong> followers</span>' +
-        '<span class="hero-stat"><strong>' + stars + '</strong> stars</span>';
+    window.requestAnimationFrame(frame);
+  }
+
+  // ————————————————————————————————————————————————————————————————
+  // RENDERERS — HERO
+  // ————————————————————————————————————————————————————————————————
+
+  function renderHeroMetrics(data) {
+    var user = data.user || {};
+    var repos = data.repos || [];
+    var stars = repos.reduce(function (s, r) { return s + (r.stargazers_count || 0); }, 0);
+    var forks = repos.reduce(function (s, r) { return s + (r.forks_count || 0); }, 0);
+    var followers = user.followers != null ? user.followers : 0;
+    var repoCount = user.public_repos != null ? user.public_repos : repos.length;
+
+    var cells = [
+      { id: 'hm-repos', value: repoCount },
+      { id: 'hm-stars', value: stars },
+      { id: 'hm-forks', value: forks },
+      { id: 'hm-followers', value: followers }
+    ];
+    cells.forEach(function (cell) {
+      var el = document.getElementById(cell.id);
+      if (el) animateValue(el, cell.value);
+    });
+  }
+
+  function renderTerminal() {
+    var cmd = document.getElementById('term-cmd');
+    var output = document.getElementById('term-output');
+    var status = document.getElementById('term-status');
+    var windowEl = document.getElementById('term-window');
+    if (!cmd || !output) return;
+
+    function setStatus(text) { if (status) status.textContent = text; }
+
+    if (REDUCED_MOTION) {
+      cmd.textContent = TERMINAL_WHOAMI;
+      output.innerHTML = TERMINAL_ROLES.map(function (r) {
+        return '<div class="terminal-output-line terminal-output-line--accent">' + esc(r) + '</div>';
+      }).join('');
+      if (windowEl) windowEl.classList.add('terminal--done');
+      setStatus('idle');
+      return;
     }
-    // Update all GitHub links from single source of truth
-    var profileUrlBase = 'https://github.com/' + GITHUB_USERNAME;
-    var btnGitHub = qs('.hero-cta .btn-primary');
-    if (btnGitHub) btnGitHub.href = profileUrl || profileUrlBase;
-    var footerGitHub = getEl('footer-github-link');
-    if (footerGitHub) footerGitHub.href = profileUrl || profileUrlBase;
-    var footerGitHubText = getEl('footer-github-text');
-    if (footerGitHubText) footerGitHubText.textContent = 'github.com/' + GITHUB_USERNAME;
+
+    var typed = 0;
+    var typeTimer = setInterval(function () {
+      typed += 1;
+      cmd.textContent = TERMINAL_WHOAMI.slice(0, typed);
+      if (typed >= TERMINAL_WHOAMI.length) {
+        clearInterval(typeTimer);
+        setStatus('executing');
+        var roleIndex = 0;
+        var lineTimer = setInterval(function () {
+          var line = document.createElement('div');
+          line.className = 'terminal-output-line terminal-output-line--accent';
+          line.textContent = TERMINAL_ROLES[roleIndex];
+          output.appendChild(line);
+          roleIndex += 1;
+          if (roleIndex >= TERMINAL_ROLES.length) {
+            clearInterval(lineTimer);
+            if (windowEl) windowEl.classList.add('terminal--done');
+            setStatus('idle');
+          }
+        }, 240);
+      }
+    }, 45);
   }
 
-  // ——— Projects: constellation of stars ———
-  function filterRepos(repos) {
-    // Filter out forks, empty repos (no description AND no stars AND no recent activity)
-    var sixMonthsAgo = Date.now() - (180 * 24 * 60 * 60 * 1000);
-    return (repos || [])
-      .filter(function (r) {
-        if (r.fork) return false;
-        var hasDescription = r.description && r.description.trim().length > 0;
-        var hasStars = (r.stargazers_count || 0) > 0;
-        var hasRecentActivity = new Date(r.updated_at || 0).getTime() > sixMonthsAgo;
-        // Keep if has description OR stars OR recent activity
-        return hasDescription || hasStars || hasRecentActivity;
-      })
-      .sort(function (a, b) {
-        // Sort by a score: stars weight + recency
-        var scoreA = (a.stargazers_count || 0) * 2 + (a.forks_count || 0);
-        var scoreB = (b.stargazers_count || 0) * 2 + (b.forks_count || 0);
-        if (scoreB !== scoreA) return scoreB - scoreA;
-        // Tiebreak by updated_at
-        return new Date(b.updated_at || 0).getTime() - new Date(a.updated_at || 0).getTime();
-      })
-      .slice(0, 12);
+  // Cursor-follow glow (lightweight, desktop only).
+  function initHeroGlow() {
+    if (REDUCED_MOTION) return;
+    if (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) return;
+    var hero = $('.hero');
+    if (!hero) return;
+    hero.addEventListener('mousemove', function (e) {
+      var rect = hero.getBoundingClientRect();
+      hero.style.setProperty('--mx', (e.clientX - rect.left) + 'px');
+      hero.style.setProperty('--my', (e.clientY - rect.top) + 'px');
+    });
   }
 
-  function starSize(stars) {
-    if (stars >= 50) return 32;
-    if (stars >= 20) return 28;
-    if (stars >= 10) return 24;
-    if (stars >= 5) return 20;
-    if (stars >= 1) return 16;
-    return 12;
+  // Decorative ticker — repeated twice so the scroll loop is seamless.
+  function renderTicker() {
+    var track = document.getElementById('ticker-track');
+    if (!track || !TICKER.length) return;
+    var sep = '<span class="ticker-sep" aria-hidden="true">&#10022;</span>';
+    var base = TICKER.map(function (t) {
+      return '<span class="ticker-item">' + esc(t) + '</span>';
+    }).join(sep) + sep;
+    track.innerHTML = base + base;
   }
 
-  function recentGlow(updatedAt) {
-    var days = (Date.now() - new Date(updatedAt).getTime()) / (24 * 60 * 60 * 1000);
-    if (days <= 7) return 1;
-    if (days <= 30) return 0.85;
-    if (days <= 90) return 0.7;
-    if (days <= 180) return 0.55;
-    return 0.4;
+  // ————————————————————————————————————————————————————————————————
+  // RENDERERS — STACK
+  // ————————————————————————————————————————————————————————————————
+
+  function renderStackMatrix() {
+    var wrap = document.getElementById('stack-matrix');
+    if (!wrap) return;
+    wrap.innerHTML = STACK.map(function (g, gi) {
+      return (
+        '<div class="stack-group" data-reveal style="--d:' + (gi * 60) + 'ms">' +
+          '<h3 class="stack-group-title"><span class="stack-group-num">0' + (gi + 1) + '.</span> ' + esc(g.group) + '</h3>' +
+          '<div class="stack-items">' +
+            g.items.map(function (item) {
+              var used = STACK_USED[item] ? 'used in ' + STACK_USED[item] : '';
+              return '<span class="stack-item" tabindex="0" data-used="' + esc(used) + '">' + esc(item) + '</span>';
+            }).join('') +
+          '</div>' +
+        '</div>'
+      );
+    });
+    $$('.stack-group', wrap).forEach(observeReveal);
   }
 
-  // Generate intentional grid-like positions with organic random offset
-  function generateStarPositions(count) {
-    var positions = [];
-    // Use a grid layout with 4 columns, adjusted for count
-    var cols = Math.min(4, count);
-    var rows = Math.ceil(count / cols);
-    
-    for (var i = 0; i < count; i++) {
-      var col = i % cols;
-      var row = Math.floor(i / cols);
-      
-      // Base grid position with padding
-      var baseX = 15 + (col / Math.max(cols - 1, 1)) * 70;
-      var baseY = 12 + (row / Math.max(rows - 1, 1)) * 72;
-      
-      // Add organic randomness (±8%)
-      var offsetX = (Math.random() - 0.5) * 16;
-      var offsetY = (Math.random() - 0.5) * 14;
-      
-      positions.push({
-        x: Math.max(8, Math.min(92, baseX + offsetX)),
-        y: Math.max(8, Math.min(88, baseY + offsetY))
-      });
+  // ————————————————————————————————————————————————————————————————
+  // RENDERERS — PROJECTS
+  // ————————————————————————————————————————————————————————————————
+
+  function repoMap(repos) {
+    var map = {};
+    (repos || []).forEach(function (r) { map[r.name.toLowerCase()] = r; });
+    return map;
+  }
+
+  function enrichedProjects(data) {
+    var map = repoMap(data.repos);
+    return FEATURED_PROJECTS.map(function (p) {
+      var r = map[p.repo.toLowerCase()];
+      return {
+        repo: p.repo,
+        title: p.title,
+        category: p.category,
+        description: p.description,
+        stack: p.stack,
+        status: p.status,
+        statusType: p.statusType,
+        stars: r && r.stargazers_count != null ? r.stargazers_count : 0,
+        forks: r && r.forks_count != null ? r.forks_count : 0,
+        language: (r && r.language) || '',
+        url: (r && r.html_url) || 'https://github.com/' + GITHUB_USERNAME + '/' + p.repo,
+        updated: (r && r.updated_at) || ''
+      };
+    });
+  }
+
+  function renderFlagship(flagship) {
+    var stackWrap = document.getElementById('flagship-stack');
+    if (stackWrap) {
+      stackWrap.innerHTML = flagship.stack.map(function (s) {
+        return '<span class="tag">' + esc(s) + '</span>';
+      }).join('');
     }
-    
-    return positions;
+    var set = function (id, val) { var el = document.getElementById(id); if (el) el.textContent = val; };
+    set('fl-stars', flagship.stars.toLocaleString('en-US'));
+    set('fl-forks', flagship.forks.toLocaleString('en-US'));
+    set('fl-updated', flagship.updated ? fmtDate(flagship.updated) : '—');
+  }
+
+  function workCard(p, num) {
+    return (
+      '<article class="work-card" data-reveal data-category="' + esc(p.category) + '" style="--d:' + ((num - 2) * 70) + 'ms">' +
+        '<div class="work-card-top">' +
+          '<span class="work-card-num">0' + num + '</span>' +
+          '<span class="work-card-status' + (p.statusType === 'archived' ? ' archived' : '') + '">' + esc(p.status) + '</span>' +
+        '</div>' +
+        '<h3 class="work-card-title"><a href="' + p.url + '" target="_blank" rel="noopener noreferrer">' + esc(p.title) + '</a></h3>' +
+        '<p class="work-card-desc">' + esc(p.description) + '</p>' +
+        '<div class="work-card-tags">' + p.stack.map(function (s) { return '<span class="tag">' + esc(s) + '</span>'; }).join('') + '</div>' +
+        '<div class="work-card-foot">' +
+          '<span class="work-card-stats">' +
+            p.stars + ' &#9733; &middot; ' + p.forks + ' &#2442;' +
+            (p.language ? ' &middot; ' + esc(p.language) : '') +
+          '</span>' +
+          '<a class="work-card-link" href="' + p.url + '" target="_blank" rel="noopener noreferrer">GitHub ' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17L17 7M7 7h10v10"/></svg>' +
+          '</a>' +
+        '</div>' +
+      '</article>'
+    );
   }
 
   function renderProjects(data) {
-    var repos = filterRepos(data.repos);
-    if (!constellationEl || !projectsSkeleton) return;
-    projectsSkeleton.classList.add('hidden');
-    constellationEl.classList.remove('hidden');
+    var projects = enrichedProjects(data);
+    var grid = document.getElementById('projects-grid');
+    var filters = document.getElementById('project-filters');
+    if (!grid) return;
 
-    constellationEl.innerHTML = '';
-    
-    var positions = generateStarPositions(repos.length);
-    
-    // Create subtle connector lines (SVG)
-    if (repos.length > 1) {
-      var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-      svg.setAttribute('class', 'constellation-lines');
-      svg.setAttribute('aria-hidden', 'true');
-      
-      // Connect some nearby stars for constellation effect
-      for (var i = 0; i < positions.length - 1; i++) {
-        // Only connect to next 1-2 stars to avoid clutter
-        var connections = Math.min(2, positions.length - i - 1);
-        for (var j = 1; j <= connections; j++) {
-          if (i + j < positions.length && Math.random() > 0.3) {
-            var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            line.setAttribute('x1', positions[i].x + '%');
-            line.setAttribute('y1', positions[i].y + '%');
-            line.setAttribute('x2', positions[i + j].x + '%');
-            line.setAttribute('y2', positions[i + j].y + '%');
-            line.setAttribute('class', 'constellation-line');
-            line.style.animationDelay = (i * 0.1) + 's';
-            svg.appendChild(line);
-          }
-        }
-      }
-      constellationEl.appendChild(svg);
+    var flagship = projects.filter(function (p) { return p.repo === 'instant-ledger'; })[0];
+    var secondary = projects.filter(function (p) { return p.repo !== 'instant-ledger'; });
+
+    if (flagship) renderFlagship(flagship);
+
+    var categories = ['All'];
+    secondary.forEach(function (p) {
+      if (categories.indexOf(p.category) === -1) categories.push(p.category);
+    });
+
+    function renderGrid(filter) {
+      var list = filter === 'All' ? secondary : secondary.filter(function (p) { return p.category === filter; });
+      grid.innerHTML = list.map(function (p, i) { return workCard(p, i + 2); }).join('');
+      $$('.work-card', grid).forEach(observeReveal);
     }
-    
-    repos.forEach(function (r, i) {
-      var color = (r.language && (LANGUAGE_COLORS[r.language] || DEFAULT_LANG_COLOR)) || DEFAULT_LANG_COLOR;
-      var size = starSize(r.stargazers_count || 0);
-      var opacity = recentGlow(r.updated_at || r.created_at);
-      var pos = positions[i];
-      
-      var star = document.createElement('a');
-      star.href = r.html_url || ('https://github.com/' + GITHUB_USERNAME + '/' + r.name);
-      star.target = '_blank';
-      star.rel = 'noopener noreferrer';
-      star.className = 'constellation-star';
-      star.setAttribute('style',
-        '--star-size: ' + size + 'px; --star-color: ' + color + '; --star-glow: ' + opacity + ';' +
-        ' --star-x: ' + pos.x + '%; --star-y: ' + pos.y + '%;' +
-        ' animation-delay: ' + (i * 0.1) + 's;');
-      star.setAttribute('aria-label', r.name + ' – ' + (r.description || 'Repository'));
-      
-      var langBadge = r.language ? '<span class="star-lang" style="background:' + color + '20; color:' + color + ';">' + r.language + '</span>' : '';
-      
-      star.innerHTML =
-        '<span class="constellation-star-inner"></span>' +
-        '<span class="constellation-star-tooltip">' +
-        '<strong>' + (r.name || '').replace(/</g, '&lt;') + '</strong>' +
-        (r.description ? '<em>' + (r.description || '').substring(0, 80).replace(/</g, '&lt;') + (r.description.length > 80 ? '…' : '') + '</em>' : '') +
-        '<small>' + (r.stargazers_count || 0) + ' ★' + (r.language ? ' · ' + r.language : '') + '</small>' +
-        '</span>';
-      constellationEl.appendChild(star);
-    });
-  }
 
-  // ——— Skills: orbits + bars from languages ———
-  var skillsWrapper, skillsOrbitsEl;
-  
-  function langValue(l) {
-    if (l.count != null) return l.count;
-    if (l.bytes) return Math.round(l.bytes / 10000);
-    return 0;
-  }
-
-  function renderSkillsOrbits(languages) {
-    if (!skillsOrbitsEl) return;
-    skillsOrbitsEl.innerHTML = '';
-    
-    // Limit to top 6 languages for orbits
-    var topLangs = languages.slice(0, 6);
-    var maxVal = Math.max.apply(null, topLangs.map(langValue)) || 1;
-    
-    // Create center orb
-    var center = document.createElement('div');
-    center.className = 'orbit-center';
-    center.innerHTML = '<span>Tech</span>';
-    skillsOrbitsEl.appendChild(center);
-    
-    // Create orbital rings and planets
-    topLangs.forEach(function (lang, i) {
-      var val = langValue(lang);
-      var radius = 50 + i * 40; // Ring radius: 50, 90, 130, 170, 210, 250
-      var planetSize = Math.max(12, Math.min(24, 10 + (val / maxVal) * 14));
-      var duration = 15 + i * 5; // Slower outer orbits
-      
-      // Create ring
-      var ring = document.createElement('div');
-      ring.className = 'orbit-ring';
-      ring.style.width = (radius * 2) + 'px';
-      ring.style.height = (radius * 2) + 'px';
-      ring.style.animationDelay = (i * 0.3) + 's';
-      skillsOrbitsEl.appendChild(ring);
-      
-      // Create orbit path (rotating container)
-      var path = document.createElement('div');
-      path.className = 'orbit-path';
-      path.style.width = (radius * 2) + 'px';
-      path.style.height = (radius * 2) + 'px';
-      path.style.setProperty('--orbit-duration', duration + 's');
-      // Start at different positions
-      path.style.transform = 'translate(-50%, -50%) rotate(' + (i * 60) + 'deg)';
-      
-      // Create planet
-      var planet = document.createElement('div');
-      planet.className = 'orbit-planet';
-      planet.setAttribute('data-lang', lang.name || '');
-      planet.style.width = planetSize + 'px';
-      planet.style.height = planetSize + 'px';
-      planet.style.background = lang.color || DEFAULT_LANG_COLOR;
-      planet.style.boxShadow = '0 0 ' + (planetSize / 2) + 'px ' + (lang.color || DEFAULT_LANG_COLOR) + '60';
-      planet.style.top = '0';
-      planet.style.left = '50%';
-      
-      path.appendChild(planet);
-      skillsOrbitsEl.appendChild(path);
-    });
-  }
-
-  function renderSkillsBars(languages) {
-    if (!skillsAuraEl) return;
-    skillsAuraEl.innerHTML = '';
-    
-    var maxVal = Math.max.apply(null, languages.map(langValue)) || 1;
-    var total = languages.reduce(function(sum, l) { return sum + langValue(l); }, 0);
-    
-    languages.forEach(function (lang, i) {
-      var val = langValue(lang);
-      var pct = Math.max(8, (val / maxVal) * 100);
-      var percentage = total > 0 ? Math.round((val / total) * 100) : 0;
-      var bar = document.createElement('div');
-      bar.className = 'skill-bar-wrap';
-      bar.setAttribute('style', 'animation-delay: ' + (i * 0.08) + 's;');
-      bar.innerHTML =
-        '<div class="skill-bar-label"><span>' + (lang.name || '').replace(/</g, '&lt;') + '</span><span>' + percentage + '%</span></div>' +
-        '<div class="skill-bar"><span class="skill-bar-fill" style="width:' + pct + '%; background-color:' + (lang.color || DEFAULT_LANG_COLOR) + '; --bar-color: ' + (lang.color || DEFAULT_LANG_COLOR) + ';"></span></div>';
-      skillsAuraEl.appendChild(bar);
-    });
-  }
-
-  function renderSkills(data) {
-    var languages = data.languages || [];
-    if (!skillsSkeleton) return;
-    skillsSkeleton.classList.add('hidden');
-    
-    if (skillsWrapper) {
-      skillsWrapper.classList.remove('hidden');
+    if (filters) {
+      filters.innerHTML = categories.map(function (c) {
+        return '<button class="filter-btn" data-filter="' + esc(c) + '" aria-pressed="' + (c === 'All' ? 'true' : 'false') + '">' + esc(c) + '</button>';
+      }).join('');
+      filters.addEventListener('click', function (e) {
+        var btn = e.target.closest('.filter-btn');
+        if (!btn) return;
+        var filter = btn.getAttribute('data-filter');
+        $$('.filter-btn', filters).forEach(function (b) { b.setAttribute('aria-pressed', 'false'); });
+        btn.setAttribute('aria-pressed', 'true');
+        renderGrid(filter);
+        // Flagship stays visible regardless of the active filter.
+        var fl = document.getElementById('project-flagship');
+        if (fl) fl.hidden = false;
+      });
     }
-    
-    // Render both views
-    renderSkillsOrbits(languages);
-    renderSkillsBars(languages);
+
+    renderGrid('All');
   }
 
-  // ——— Timeline: recent activity (repo updates) with scroll reveal ———
-  var timelineObserver = null;
-  
-  function renderTimeline(data) {
-    var repos = (data.repos || [])
+  // ————————————————————————————————————————————————————————————————
+  // RENDERERS — GITHUB COMMAND CENTER
+  // ————————————————————————————————————————————————————————————————
+
+  function setGithubStatus(source) {
+    var statusEl = document.getElementById('github-status');
+    var textEl = document.getElementById('gh-status-text');
+    if (!statusEl) return;
+    statusEl.classList.remove('is-live', 'is-snapshot');
+    if (source === 'live') {
+      statusEl.classList.add('is-live');
+      if (textEl) textEl.textContent = 'LIVE';
+    } else {
+      statusEl.classList.add('is-snapshot');
+      if (textEl) textEl.textContent = source === 'cache' ? 'CACHED' : 'SNAPSHOT';
+    }
+  }
+
+  function renderGithubMetrics(data) {
+    var user = data.user || {};
+    var repos = data.repos || [];
+    var stars = repos.reduce(function (s, r) { return s + (r.stargazers_count || 0); }, 0);
+    var forks = repos.reduce(function (s, r) { return s + (r.forks_count || 0); }, 0);
+    var set = function (id, val) { var el = document.getElementById(id); if (el) el.textContent = val; };
+
+    set('gh-repos', (user.public_repos != null ? user.public_repos : repos.length).toLocaleString('en-US'));
+    set('gh-stars', stars.toLocaleString('en-US'));
+    set('gh-forks', forks.toLocaleString('en-US'));
+    set('gh-followers', (user.followers != null ? user.followers : '—'));
+    set('gh-following', (user.following != null ? user.following : '—'));
+    var since = user.created_at ? new Date(user.created_at).getUTCFullYear() : '—';
+    set('gh-since', since);
+  }
+
+  function renderLangDistribution(data) {
+    var wrap = document.getElementById('lang-distribution');
+    if (!wrap) return;
+    var langs = (data.languages || []).slice(0, 7);
+    if (!langs.length) return;
+    var max = Math.max.apply(null, langs.map(function (l) { return l.count; })) || 1;
+
+    wrap.innerHTML = langs.map(function (l) {
+      var pct = Math.round((l.count / max) * 100);
+      return (
+        '<div class="lang-row">' +
+          '<span class="lang-name">' + esc(l.name) + '</span>' +
+          '<div class="lang-track"><span class="lang-fill" style="width:' + pct + '%;background:' + (l.color || DEFAULT_COLOR) + '"></span></div>' +
+          '<span class="lang-count">' + l.count + '</span>' +
+        '</div>'
+      );
+    }).join('');
+    $$('.lang-row', wrap).forEach(observeReveal);
+  }
+
+  function renderActivity(data) {
+    var wrap = document.getElementById('github-activity');
+    if (!wrap) return;
+    var items = (data.repos || [])
       .filter(function (r) { return !r.fork; })
       .sort(function (a, b) { return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime(); })
-      .slice(0, 6);
-    if (!timelineEl || !timelineSkeleton) return;
-    timelineSkeleton.classList.add('hidden');
-    timelineEl.classList.remove('hidden');
-    timelineEl.innerHTML = '';
-
-    repos.forEach(function (r, i) {
-      var date = r.updated_at ? new Date(r.updated_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric', day: 'numeric' }) : '';
-      var item = document.createElement('a');
-      item.href = r.html_url || ('https://github.com/' + GITHUB_USERNAME + '/' + r.name);
-      item.target = '_blank';
-      item.rel = 'noopener noreferrer';
-      item.className = 'timeline-item';
-      item.setAttribute('data-index', i);
-      item.innerHTML =
-        '<span class="timeline-dot"></span>' +
-        '<span class="timeline-content">' +
-        '<strong>' + (r.name || '').replace(/</g, '&lt;') + '</strong>' +
-        '<em>' + (date || '').replace(/</g, '&lt;') + '</em>' +
-        '</span>';
-      timelineEl.appendChild(item);
-    });
-    
-    // Set up scroll-based reveal
-    initTimelineObserver();
+      .slice(0, 7);
+    if (!items.length) return;
+    wrap.innerHTML = items.map(function (r) {
+      var langColor = LANG_COLOR[r.language] || DEFAULT_COLOR;
+      return (
+        '<li>' +
+          '<a href="' + (r.html_url || 'https://github.com/' + GITHUB_USERNAME + '/' + r.name) + '" target="_blank" rel="noopener noreferrer">' +
+            '<span class="activity-dot" style="background:' + langColor + '" aria-hidden="true"></span>' +
+            '<span class="activity-name">' + esc(r.name) + '</span>' +
+            '<span class="activity-date">' + esc(fmtDate(r.updated_at)) + '</span>' +
+          '</a>' +
+        '</li>'
+      );
+    }).join('');
   }
-  
-  function initTimelineObserver() {
-    // Check for reduced motion preference
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      // Just show all items immediately
-      qsAll('.timeline-item').forEach(function(item) {
-        item.classList.add('timeline-item--visible');
+
+  // ————————————————————————————————————————————————————————————————
+  // RENDERERS — JOURNEY (git log)
+  // ————————————————————————————————————————————————————————————————
+
+  function renderJourneyLog() {
+    var log = document.getElementById('journey-log');
+    if (!log) return;
+
+    var items = JOURNEY.map(function (j, i) {
+      return (
+        '<li class="git-item" data-reveal style="--d:' + (i * 90) + 'ms">' +
+          '<span class="git-hash">' + pseudoHash(j.year + j.title) + '</span>' +
+          '<span class="git-msg"><strong>' + esc(j.title) + '</strong>' +
+            '<span class="git-text">' + esc(j.text) + '</span>' +
+          '</span>' +
+          '<span class="git-year">' + esc(j.year) + '</span>' +
+        '</li>'
+      );
+    }).join('');
+
+    log.outerHTML =
+      '<div class="journey-shell">' +
+        '<p class="journey-cmd"><span class="terminal-prompt">$</span> git log --oneline --reverse</p>' +
+        '<ol class="git-log" aria-label="Development timeline">' + items + '</ol>' +
+      '</div>';
+
+    $$('.git-item').forEach(observeReveal);
+  }
+
+  // ————————————————————————————————————————————————————————————————
+  // NAV + MISC
+  // ————————————————————————————————————————————————————————————————
+
+  function initNav() {
+    var toggle = $('.nav-toggle');
+    var links = document.getElementById('nav-menu');
+    if (toggle && links) {
+      var close = function () {
+        toggle.setAttribute('aria-expanded', 'false');
+        links.classList.remove('is-open');
+        document.body.style.overflow = '';
+      };
+      toggle.addEventListener('click', function () {
+        var open = toggle.getAttribute('aria-expanded') === 'true';
+        toggle.setAttribute('aria-expanded', String(!open));
+        links.classList.toggle('is-open');
+        document.body.style.overflow = open ? '' : 'hidden';
       });
-      return;
-    }
-    
-    if (!('IntersectionObserver' in window)) {
-      // Fallback: show all items
-      qsAll('.timeline-item').forEach(function(item) {
-        item.classList.add('timeline-item--visible');
+      $$('a', links).forEach(function (a) { a.addEventListener('click', close); });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') close();
       });
-      return;
     }
-    
-    var items = qsAll('.timeline-item');
-    var revealed = false;
-    
-    timelineObserver = new IntersectionObserver(function(entries) {
-      entries.forEach(function(entry) {
-        if (entry.isIntersecting && !revealed) {
-          revealed = true;
-          // Stagger reveal of all items
-          items.forEach(function(item, i) {
-            setTimeout(function() {
-              item.classList.add('timeline-item--visible');
-            }, i * 100);
-          });
-          timelineObserver.disconnect();
-        }
-      });
-    }, {
-      threshold: 0.2,
-      rootMargin: '0px 0px -50px 0px'
-    });
-    
-    // Observe the timeline container
-    if (timelineEl) {
-      timelineObserver.observe(timelineEl);
-    }
-  }
-
-  // ——— Snapshot indicator ———
-  function showSnapshot(source) {
-    if (source === 'api' || !snapshotIndicator) return;
-    snapshotIndicator.classList.remove('hidden');
-    snapshotIndicator.setAttribute('aria-label', 'Viewing cached or fallback data');
-  }
-
-  // ═══════════════════════════════════════════════════════════════════════════
-  // VISUAL EFFECTS — Particle system and interactive lighting
-  // ═══════════════════════════════════════════════════════════════════════════
-
-  // ——— Mouse parallax on hero with lighting effect ———
-  function initMouseParallax() {
-    var hero = qs('.hero');
-    var heroBg = qs('.hero-bg');
-    if (!hero) return;
-    
-    hero.addEventListener('mousemove', function (e) {
-      var rect = hero.getBoundingClientRect();
-      var x = (e.clientX - rect.left) / rect.width;
-      var y = (e.clientY - rect.top) / rect.height;
-      var offsetX = x - 0.5;
-      var offsetY = y - 0.5;
-      
-      // Orb parallax
-      if (heroOrb) {
-        heroOrb.style.transform = 'translate(-50%,-50%) translate(' + (offsetX * 16) + 'px,' + (offsetY * 16) + 'px)';
-      }
-      
-      // Mouse-reactive light spot
-      if (heroBg) {
-        heroBg.style.setProperty('--mouse-x', (x * 100) + '%');
-        heroBg.style.setProperty('--mouse-y', (y * 100) + '%');
-      }
-    });
-    
-    hero.addEventListener('mouseleave', function () {
-      if (heroOrb) {
-        heroOrb.style.transform = 'translate(-50%, -50%)';
-      }
-    });
-  }
-
-  // ——— Particle system ———
-  function createParticles() {
-    var hero = qs('.hero');
-    if (!hero) return;
-    
-    // Check for reduced motion preference
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    
-    var container = document.createElement('div');
-    container.className = 'hero-particles';
-    container.setAttribute('aria-hidden', 'true');
-    
-    var particleCount = window.innerWidth < 768 ? 20 : 35;
-    var colors = [
-      'rgba(88, 166, 255, 0.5)',
-      'rgba(163, 113, 247, 0.4)',
-      'rgba(88, 166, 255, 0.3)',
-      'rgba(139, 148, 158, 0.3)'
-    ];
-    
-    for (var i = 0; i < particleCount; i++) {
-      var p = document.createElement('div');
-      p.className = 'particle';
-      var size = 2 + Math.random() * 4;
-      var x = Math.random() * 100;
-      var y = Math.random() * 100;
-      var duration = 6 + Math.random() * 8;
-      var delay = Math.random() * 6;
-      var tx = (Math.random() - 0.5) * 60;
-      var ty = -20 - Math.random() * 60;
-      var opacity = 0.3 + Math.random() * 0.4;
-      var color = colors[Math.floor(Math.random() * colors.length)];
-      
-      p.style.cssText = 
-        'left:' + x + '%;' +
-        'top:' + y + '%;' +
-        '--size:' + size + 'px;' +
-        '--duration:' + duration + 's;' +
-        '--delay:' + delay + 's;' +
-        '--tx:' + tx + 'px;' +
-        '--ty:' + ty + 'px;' +
-        '--opacity:' + opacity + ';' +
-        '--color:' + color + ';';
-      
-      container.appendChild(p);
-    }
-    
-    hero.insertBefore(container, hero.firstChild);
-  }
-
-  // ——— Init: resolve data then render all ———
-  function init() {
-    heroOrb = qs('.hero-orb');
-    heroName = qs('.hero-name');
-    heroBio = qs('.hero-bio');
-    heroStats = qs('.hero-stats');
-    heroSkeleton = qs('.hero-skeleton');
-    heroContent = qs('.hero-content-inner');
-    constellationEl = qs('.constellation');
-    projectsSkeleton = qs('.projects-skeleton');
-    skillsWrapper = qs('.skills-wrapper');
-    skillsOrbitsEl = qs('.skills-orbits');
-    skillsAuraEl = qs('.skills-aura');
-    skillsSkeleton = qs('.skills-skeleton');
-    timelineEl = qs('.timeline-list');
-    timelineSkeleton = qs('.timeline-skeleton');
-    snapshotIndicator = qs('.snapshot-indicator');
-
-    var yearEl = getEl('year');
+    var yearEl = document.getElementById('year');
     if (yearEl) yearEl.textContent = new Date().getFullYear();
+  }
 
-    var navToggle = qs('.nav-toggle');
-    var navLinks = qs('.nav-links');
-    if (navToggle && navLinks) {
-      navToggle.addEventListener('click', function () {
-        var isOpen = navToggle.getAttribute('aria-expanded') === 'true';
-        navToggle.setAttribute('aria-expanded', !isOpen);
-        navLinks.classList.toggle('is-open');
-        document.body.style.overflow = isOpen ? '' : 'hidden';
-      });
-      qsAll('.nav-links a').forEach(function (link) {
-        link.addEventListener('click', function () {
-          navToggle.setAttribute('aria-expanded', 'false');
-          navLinks.classList.remove('is-open');
-          document.body.style.overflow = '';
+  function initNavSpy() {
+    var navLinks = $$('.nav-link[data-section]');
+    if (!navLinks.length || !('IntersectionObserver' in window)) return;
+
+    var sections = navLinks
+      .map(function (a) { return document.getElementById(a.getAttribute('data-section')); })
+      .filter(Boolean);
+
+    var spy = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        navLinks.forEach(function (a) {
+          a.classList.toggle('is-active', a.getAttribute('data-section') === entry.target.id);
         });
       });
-    }
+    }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
 
-    // Create particles before data loads for immediate visual impact
-    createParticles();
-    
+    sections.forEach(function (s) { spy.observe(s); });
+  }
+
+  // ————————————————————————————————————————————————————————————————
+  // INIT
+  // ————————————————————————————————————————————————————————————————
+
+  function init() {
+    initNav();
+    initNavSpy();
+    initHeroGlow();
+    armStaticReveals();
+
+    renderStackMatrix();
+    renderJourneyLog();
+    renderTerminal();
+    renderTicker();
+
+    // Static content renders immediately; analytics enrich once data resolves.
     getData().then(function (data) {
-      renderHero(data);
+      renderHeroMetrics(data);
       renderProjects(data);
-      renderSkills(data);
-      renderTimeline(data);
-      showSnapshot(data.source);
-      initMouseParallax();
+      renderGithubMetrics(data);
+      renderLangDistribution(data);
+      renderActivity(data);
+      setGithubStatus(data.source);
     });
   }
 
